@@ -121,7 +121,6 @@ public class EmployeeService implements EmployeeDAO {
 	@Override
 	public ResultSet selectEmployeeProfile(int empId) {
 		ResultSet employeeProfileRecord = null;
-		LogRecord.logger.error("In profile Dao");
 		String sql = "SELECT * FROM " + Tables.EMPLOYEE_PROFILE
 				+ " where emp_id = ?";
 		try {

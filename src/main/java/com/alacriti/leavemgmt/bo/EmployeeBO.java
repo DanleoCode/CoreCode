@@ -25,6 +25,9 @@ public class EmployeeBO {
 				employeeProfile.setEmpId(generatedEmpId);
 			}
 		}
+		else{
+			//rollback
+		}
 		try {
 			this.con.commit();
 			ConnectionHelper.finalizeConnection(con);
