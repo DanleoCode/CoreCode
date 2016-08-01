@@ -5,9 +5,13 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.log4j.Logger;
 
+import com.alacriti.leavemgmt.util.LeaveBoUtility;
+import com.alacriti.leavemgmt.valueobject.EmployeeLeaveHistory;
 import com.alacriti.leavemgmt.valueobject.Leave;
 import com.alacriti.leavemgmt.valueobject.LeaveInstance;
 import com.alacriti.leavemgmt.valueobject.Tables;
@@ -60,8 +64,7 @@ public class LeaveDAOImplement {
 	public int addNewEmployeeLeaveInstance(LeaveInstance leaveInstance) {
 		int updatedRows = -1;
 		PreparedStatement pStmt = null;
-		String sql = "INSERT INTO "
-				+ Tables.EMPLOYEE_LEAVE_INSTANCE
+		String sql = "INSERT INTO " + Tables.EMPLOYEE_LEAVE_INSTANCE
 				+ "(leave_id, emp_id,leave_status_code,creation_time,"
 				+ "last_modified_time,approver1_id,approver2_id,approver3_id) "
 				+ "VALUES(?,?,?,?,?,?,?,?)";
@@ -80,19 +83,110 @@ public class LeaveDAOImplement {
 		} catch (SQLException ex) {
 			logger.debug("SQLException : " + ex.getMessage());
 			logger.error("SQLException : " + ex.getMessage());
-		} finally{
+		} finally {
 			try {
 				pStmt.close();
-			} catch(NullPointerException ex){
-				logger.debug("PerparedStatement not opened : " + ex.getMessage());
-				logger.error("PerparedStatement not opened : " + ex.getMessage());
-			}
-			catch (SQLException ex) {
-				logger.debug("PerparedStatement has problem : " + ex.getMessage());
-				logger.error("PerparedStatement has problem : " + ex.getMessage());
+			} catch (NullPointerException ex) {
+				logger.debug("PerparedStatement not opened : "
+						+ ex.getMessage());
+				logger.error("PerparedStatement not opened : "
+						+ ex.getMessage());
+			} catch (SQLException ex) {
+				logger.debug("PerparedStatement has problem : "
+						+ ex.getMessage());
+				logger.error("PerparedStatement has problem : "
+						+ ex.getMessage());
 			}
 		}
-		
+
 		return updatedRows;
+	}
+
+	public int updateLeaveStatus(LeaveInstance leaveInstance) {
+		String sql = "UPDATE "
+				+ Tables.EMPLOYEE_LEAVE_INSTANCE
+				+ " SET leave_status_code = ? , last_modified_time = ? Where leave_Id = ?";
+		int updatedRows = -1;
+		PreparedStatement pStmt = null;
+		try {
+			logger.info("Levae dao");
+			pStmt = con.prepareStatement(sql);
+			pStmt.setInt(1, leaveInstance.getLeaveStatusCode());
+			pStmt.setTimestamp(2, leaveInstance.getLastModified());
+			pStmt.setLong(3, leaveInstance.getLeaveId());
+			updatedRows = pStmt.executeUpdate();
+		} catch (NullPointerException ex) {
+			logger.info("Connection not found.");
+			logger.error("Connection not found");
+		} catch (SQLException ex) {
+			logger.info("SQLException : " + ex.getMessage());
+			logger.error("SQLException : " + ex.getMessage());
+		} finally {
+			try {
+				pStmt.close();
+			} catch (NullPointerException ex) {
+				logger.info("PreparedStatement is null.");
+				logger.error("PreparedStatement is null.");
+			} catch (SQLException ex) {
+				logger.error("SQLException : " + ex.getMessage());
+			}
+		}
+
+		return updatedRows;
+	}
+
+	public List<LeaveInstance> getPendingLeaveApproval(int empId,
+			short leaveStatusCode) {
+		String sql = "select * from " + Tables.EMPLOYEE_LEAVE_INSTANCE
+				+ " where approver1_id = ? AND leave_status_code = ?";
+		PreparedStatement pStmt = null;
+		ResultSet approver1List = null;
+		List<LeaveInstance> list = null;
+		try {
+			pStmt = con.prepareStatement(sql);
+			pStmt.setInt(1, empId);
+			pStmt.setShort(2, leaveStatusCode);
+			approver1List = pStmt.executeQuery();
+			list = LeaveBoUtility.getLeaveApprovalList(approver1List);
+		} catch (NullPointerException ex) {
+			logger.info("Connection not found.");
+			logger.error("Connection not found");
+		} catch (SQLException ex) {
+			logger.info("SQLException : " + ex.getMessage());
+			logger.error("Connection not found");
+		} finally {
+			if (pStmt != null) {
+				try {
+					pStmt.close();
+				} catch (NullPointerException ex) {
+					logger.info("preparedStatement is null.");
+					logger.error("preparedStatement is null");
+				} catch (SQLException ex) {
+					logger.info("SQLException : " + ex.getMessage());
+				}
+			}
+		}
+		return list;
+	}
+
+	public List<EmployeeLeaveHistory> getAllLeaves(int empId) {
+		String sql = "SELECT * FROM " + Tables.EMPLOYEE_LEAVE_INSTANCE + " a, "
+				+ Tables.LEAVE_INSTANCE
+				+ " b where a.leave_id = b.leave_id and a.emp_id=?";
+		PreparedStatement pStmt = null;
+		List<EmployeeLeaveHistory> list = new ArrayList<EmployeeLeaveHistory>();
+		try {
+			pStmt = con.prepareStatement(sql);
+			pStmt.setInt(1, empId);
+			ResultSet employeeLeaveHistory = pStmt.executeQuery();
+			list = LeaveBoUtility.getEmployeeLeaveHistory(employeeLeaveHistory);
+		} catch (NullPointerException ex) {
+			logger.error("Something not correct : " + ex.getMessage());
+		} catch (SQLException ex) {
+			logger.error("SQLException : " + ex.getMessage());
+		} catch(Exception ex){
+			logger.error("Exception Occured : " + ex.getMessage());
+		}
+		return list;
 	}
 }

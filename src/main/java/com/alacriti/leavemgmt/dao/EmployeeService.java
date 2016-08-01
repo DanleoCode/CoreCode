@@ -6,6 +6,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import org.apache.log4j.Logger;
+
+import com.alacriti.leavemgmt.util.EmployeeBoUtility;
 import com.alacriti.leavemgmt.util.LogRecord;
 import com.alacriti.leavemgmt.valueobject.EmployeeInfo;
 import com.alacriti.leavemgmt.valueobject.EmployeeProfile;
@@ -14,10 +17,7 @@ import com.alacriti.leavemgmt.valueobject.Tables;
 public class EmployeeService implements EmployeeDAO {
 
 	private Connection con;
-
-	// public EmployeeService() {
-	// con = ConnectionHelper.getConnection();
-	// }
+	public static Logger logger = Logger.getLogger(EmployeeService.class);
 
 	public EmployeeService(Connection con) {
 		this.con = con;
@@ -108,11 +108,9 @@ public class EmployeeService implements EmployeeDAO {
 			pStmt.setInt(1, empId);
 			employeeInfoRecord = pStmt.executeQuery();
 		} catch (NullPointerException ex) {
-			LogRecord.logger.error("Connection Not Created : "
-					+ ex.getMessage());
+			logger.error("Connection Not Created : " + ex.getMessage());
 		} catch (SQLException ex) {
-			LogRecord.logger.error("Query Didn't executed properly : "
-					+ ex.getMessage());
+			logger.error("Query Didn't executed properly : " + ex.getMessage());
 		}
 
 		return employeeInfoRecord;
@@ -128,11 +126,9 @@ public class EmployeeService implements EmployeeDAO {
 			pStmt.setInt(1, empId);
 			employeeProfileRecord = pStmt.executeQuery();
 		} catch (NullPointerException ex) {
-			LogRecord.logger.error("Connection Not Created : "
-					+ ex.getMessage());
+			logger.error("Connection Not Created : " + ex.getMessage());
 		} catch (SQLException ex) {
-			LogRecord.logger.error("Query Didn't executed properly : "
-					+ ex.getMessage());
+			logger.error("Query Didn't executed properly : " + ex.getMessage());
 		}
 		return employeeProfileRecord;
 
@@ -148,7 +144,9 @@ public class EmployeeService implements EmployeeDAO {
 	public int updateEmployeeInfo(EmployeeInfo employeeInfo) {
 		int UpdatedRows = 0;
 		PreparedStatement pStmt = null;
-		String sql = "UPDATE 185_emp_info_table set first_name=?,last_name=?,email=?,mobile=?,gender=?,project_id=? "
+		String sql = "UPDATE "
+				+ Tables.EMPLOYEE_INFO
+				+ " set first_name=?,last_name=?,email=?,mobile=?,gender=?,project_id=? "
 				+ "where emp_id=?";
 		try {
 			pStmt = con.prepareStatement(sql);
@@ -171,5 +169,60 @@ public class EmployeeService implements EmployeeDAO {
 			}
 		}
 		return UpdatedRows;
+	}
+
+	public int authLogin(String loginId, String passwd) {
+		String sql = "SELECT emp_id FROM " + Tables.EMPLOYEE_PROFILE
+				+ " WHERE login_id = ? and passwd = ?";
+		PreparedStatement pStmt = null;
+		try {
+			pStmt = con.prepareStatement(sql);
+			pStmt.setString(1, loginId);
+			pStmt.setString(2, passwd);
+			ResultSet empProfile = pStmt.executeQuery();
+			if (empProfile.next())
+				return empProfile.getInt("emp_id");
+		} catch (NullPointerException ex) {
+			logger.info("Connection Not Found");
+		} catch (SQLException ex) {
+			logger.error("SQLException " + ex.getMessage());
+		} finally {
+			try {
+				logger.info("credentialfound");
+				pStmt.close();
+			} catch (NullPointerException ex) {
+				logger.error("PreparedStatement is null : " + ex.getMessage());
+			} catch (SQLException ex) {
+				logger.error("SQLException : " + ex.getMessage());
+			}
+		}
+		return -1;
+	}
+
+	public EmployeeProfile employeeDetail(int empId) {				//returns a full profile a Employee id = empId
+		String sql = "select * from " + Tables.EMPLOYEE_INFO + " a,"
+				+ Tables.EMPLOYEE_PROFILE
+				+ " b where a.emp_id=b.emp_id and a.emp_id= ?";
+		PreparedStatement pStmt = null;
+		try {
+			pStmt = con.prepareStatement(sql);
+			pStmt.setInt(1, empId);
+			ResultSet empProfile = pStmt.executeQuery();
+			return EmployeeBoUtility.getEmployeeDetail(empProfile);
+		} catch (NullPointerException ex) {
+			logger.info("Connection Not Found");
+		} catch (SQLException ex) {
+			logger.error("SQLException " + ex.getMessage());
+		} finally {
+			try {
+				logger.info("credentialfound");
+				pStmt.close();
+			} catch (NullPointerException ex) {
+				logger.error("PreparedStatement is null : " + ex.getMessage());
+			} catch (SQLException ex) {
+				logger.error("SQLException : " + ex.getMessage());
+			}
+		}
+		return null;
 	}
 }

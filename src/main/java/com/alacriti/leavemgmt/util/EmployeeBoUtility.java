@@ -1,43 +1,23 @@
-package com.alacriti.leavemgmt.bo;
+package com.alacriti.leavemgmt.util;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.List;
 
-import com.alacriti.leavemgmt.util.LogRecord;
-import com.alacriti.leavemgmt.valueobject.EmployeeInfo;
 import com.alacriti.leavemgmt.valueobject.EmployeeProfile;
 
-public class EmployeeDAOProcess implements EmployeeResultProcess {
-
-	@Override
-	public EmployeeInfo getSelectEmployeeInfoData(ResultSet employeeInfoRecord) {
-		EmployeeInfo employeeInfo = new EmployeeInfo();
-		try {
-			if (employeeInfoRecord.next()) {
-				employeeInfo.setEmpId(employeeInfoRecord.getInt("emp_id"));
-				employeeInfo.setEmpCode(employeeInfoRecord.getString("emp_code"));
-				employeeInfo.setFirstName(employeeInfoRecord.getString("first_name"));
-				employeeInfo.setLastName(employeeInfoRecord.getString("last_name"));
-				employeeInfo.setGender(employeeInfoRecord.getBoolean("gender"));
-				employeeInfo.setEmail(employeeInfoRecord.getString("email"));
-				employeeInfo.setMobile(employeeInfoRecord.getString("mobile"));
-				employeeInfo.setProjectId(employeeInfoRecord.getInt("project_id"));
-			}
-		} catch (NullPointerException ex) {
-			LogRecord.logger.debug("EmployeeInfoRecord ResultSet is Null for id provided : " + ex.getMessage());
-		} catch (SQLException ex) {
-			LogRecord.logger.debug("Error While Parsing the data from EmployeeInfoRecord resultset: " + ex.getMessage());
-		}
-		return employeeInfo;
-
-	}
-
-	@Override
-	public EmployeeProfile getSelectEmployeeProfileData(ResultSet employeeProfileRecord) {
+public class EmployeeBoUtility {
+	public static EmployeeProfile getEmployeeDetail(ResultSet employeeProfileRecord) {
 		EmployeeProfile employeeProfile = new EmployeeProfile();
 		try{
 			if(employeeProfileRecord.next()){
+				employeeProfile.setEmpId(employeeProfileRecord.getInt("emp_id"));
+				employeeProfile.setFirstName(employeeProfileRecord.getString("first_name"));
+				employeeProfile.setLastName(employeeProfileRecord.getString("last_Name"));
+				employeeProfile.setEmail(employeeProfileRecord.getString("email"));
+				employeeProfile.setMobile(employeeProfileRecord.getString("mobile"));
+				employeeProfile.setEmpCode(employeeProfileRecord.getString("emp_code"));
+				employeeProfile.setGender(employeeProfileRecord.getBoolean("gender"));
+				employeeProfile.setProjectId(employeeProfileRecord.getInt("project_id"));
 				employeeProfile.setLoginId(employeeProfileRecord.getString("login_id"));
 				employeeProfile.setPassword(employeeProfileRecord.getString("passwd"));
 				employeeProfile.setSecurityQuestionId(employeeProfileRecord.getInt("security_question_id"));
@@ -57,14 +37,4 @@ public class EmployeeDAOProcess implements EmployeeResultProcess {
 		}
 		return employeeProfile;
 	}
-	@Override
-	public List<EmployeeInfo> parseResultSetToList(ResultSet rs) {
-		
-		return null;
-	}
-
-
-
-	
-
 }
