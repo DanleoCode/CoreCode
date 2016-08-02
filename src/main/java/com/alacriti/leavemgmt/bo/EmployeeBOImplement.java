@@ -3,13 +3,15 @@ package com.alacriti.leavemgmt.bo;
 import java.sql.Connection;
 import java.sql.SQLException;
 
+import org.apache.log4j.Logger;
+
 import com.alacriti.leavemgmt.dao.EmployeeService;
 import com.alacriti.leavemgmt.valueobject.EmployeeInfo;
 import com.alacriti.leavemgmt.valueobject.EmployeeProfile;
 
 public class EmployeeBOImplement {
 	private Connection con;
-
+	public static Logger logger = Logger.getLogger(EmployeeBOImplement.class);
 	public EmployeeBOImplement() {
 		con = ConnectionHelper.getConnection();
 	}
@@ -70,6 +72,7 @@ public class EmployeeBOImplement {
 		EmployeeService employeeService  = new EmployeeService(con);
 		EmployeeProfile employeeProfile = new EmployeeProfile();
 		int empId = employeeService.authLogin(loginId, passwd);
+		logger.info("Emp id is : "  + empId);
 		if(empId > 0){
 			employeeProfile = employeeService.employeeDetail(empId);
 		}

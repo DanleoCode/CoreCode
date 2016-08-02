@@ -4,12 +4,15 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
+import org.apache.log4j.Logger;
+
 import com.alacriti.leavemgmt.util.LogRecord;
 import com.alacriti.leavemgmt.valueobject.EmployeeInfo;
 import com.alacriti.leavemgmt.valueobject.EmployeeProfile;
 
 public class EmployeeDAOProcess implements EmployeeResultProcess {
 
+	public static Logger logger = Logger.getLogger(EmployeeDAOProcess.class);
 	@Override
 	public EmployeeInfo getSelectEmployeeInfoData(ResultSet employeeInfoRecord) {
 		EmployeeInfo employeeInfo = new EmployeeInfo();
@@ -28,6 +31,8 @@ public class EmployeeDAOProcess implements EmployeeResultProcess {
 			LogRecord.logger.debug("EmployeeInfoRecord ResultSet is Null for id provided : " + ex.getMessage());
 		} catch (SQLException ex) {
 			LogRecord.logger.debug("Error While Parsing the data from EmployeeInfoRecord resultset: " + ex.getMessage());
+		} catch(Exception ex){
+			logger.error("Uncaught : " + ex.getMessage());
 		}
 		return employeeInfo;
 

@@ -9,8 +9,8 @@ import javax.ws.rs.core.Context;
 
 import com.alacriti.leavemgmt.deligate.AuthDeligate;
 import com.alacriti.leavemgmt.valueobject.EmployeeProfile;
-import com.alacriti.leavemgmt.valueobject.Session;
-import com.alacriti.leavemgmt.valueobject.Tempcred;
+import com.alacriti.leavemgmt.valueobject.LoginCredential;
+import com.alacriti.leavemgmt.valueobject.UserSession;
 
 @Path("/auth")
 public class Auth {
@@ -22,13 +22,18 @@ public class Auth {
 	@Produces("application/json")
 	@Path("/login")
 	
-	public EmployeeProfile auth(Tempcred tempCred){
-		Session empSession = new Session();
+	public EmployeeProfile auth(LoginCredential tempCred){
 		HttpSession session = httpServletRequest.getSession();
-		EmployeeProfile employeeProfile = AuthDeligate.validateCredentials(tempCred);
-		empSession.setSessionId(session.getId());
-		empSession.setEmpId(employeeProfile.getEmpId());
-		session.setAttribute("Employee", empSession);
+		
+		UserSession userSession = new UserSession();
+		userSession.setEmpSessionId(session.getId());
+		
+		EmployeeProfile employeeProfile = AuthDeligate.validateCredentials(tempCred,userSession);
+		
+		userSession.setEmpId(employeeProfile.getEmpId());
+		userSession.setEmployeeType(employeeProfile.getEmployeeType());
+		session.setAttribute("empId", employeeProfile.getEmpId());
+		session.setAttribute("empType", employeeProfile.getEmpId());
 		return employeeProfile;
 	}
 	

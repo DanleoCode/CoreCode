@@ -173,15 +173,17 @@ public class EmployeeService implements EmployeeDAO {
 
 	public int authLogin(String loginId, String passwd) {
 		String sql = "SELECT emp_id FROM " + Tables.EMPLOYEE_PROFILE
-				+ " WHERE login_id = ? and passwd = ?";
+				+ " WHERE login_id=? and passwd=?;";
 		PreparedStatement pStmt = null;
 		try {
 			pStmt = con.prepareStatement(sql);
 			pStmt.setString(1, loginId);
 			pStmt.setString(2, passwd);
 			ResultSet empProfile = pStmt.executeQuery();
-			if (empProfile.next())
+			logger.info("retrieved id : " );
+			if (empProfile.next()){
 				return empProfile.getInt("emp_id");
+			}
 		} catch (NullPointerException ex) {
 			logger.info("Connection Not Found");
 		} catch (SQLException ex) {
@@ -194,6 +196,8 @@ public class EmployeeService implements EmployeeDAO {
 				logger.error("PreparedStatement is null : " + ex.getMessage());
 			} catch (SQLException ex) {
 				logger.error("SQLException : " + ex.getMessage());
+			} catch(Exception ex){
+				logger.error("Uncaught exception : " + ex.getMessage());
 			}
 		}
 		return -1;
