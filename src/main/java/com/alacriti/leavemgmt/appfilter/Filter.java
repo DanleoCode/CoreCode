@@ -55,20 +55,8 @@ public class Filter implements ContainerRequestFilter{
 			sessionExist = true;
 		} catch (NullPointerException ex) {
 			logger.error("No Session" + ex.getMessage());
-			try {
-				throw new IllegalAccessException("Please Login");
-			} catch (IllegalAccessException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
 		} catch (IllegalStateException ex) {
 			logger.info("Session not exist");
-			try {
-				throw new IllegalAccessException("Please Login");
-			} catch (IllegalAccessException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
 		} finally {
 			if (!sessionExist) {
 				if (requestForRescource.equals("/auth/login")) {

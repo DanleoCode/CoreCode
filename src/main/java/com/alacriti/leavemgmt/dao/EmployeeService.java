@@ -9,7 +9,6 @@ import java.sql.Statement;
 import org.apache.log4j.Logger;
 
 import com.alacriti.leavemgmt.util.EmployeeBoUtility;
-import com.alacriti.leavemgmt.util.LogRecord;
 import com.alacriti.leavemgmt.valueobject.EmployeeInfo;
 import com.alacriti.leavemgmt.valueobject.EmployeeProfile;
 import com.alacriti.leavemgmt.valueobject.Tables;
@@ -47,12 +46,12 @@ public class EmployeeService implements EmployeeDAO {
 			generatedEmpId = addEmployeeInfoResult.getInt(1);
 			addEmployeeInfoResult.close();
 		} catch (SQLException ex) {
-			System.out.println(ex.getMessage());
+			logger.error(ex.getMessage());
 		} finally {
 			try {
 				pStmt.close();
 			} catch (SQLException ex) {
-				System.out.println(ex.getMessage());
+				logger.error(ex.getMessage());
 			}
 		}
 		return generatedEmpId;
@@ -62,8 +61,6 @@ public class EmployeeService implements EmployeeDAO {
 	public int addEmployeeProfile(EmployeeProfile employeeProfile) {
 		int UpdatedRows = 0;
 		PreparedStatement pStmt = null;
-		java.sql.Timestamp date = new java.sql.Timestamp(
-				new java.util.Date().getTime());
 		String sql = "INSERT INTO "
 				+ Tables.EMPLOYEE_PROFILE
 				+ "(emp_id,login_id,passwd,security_question_id,security_answer,"
@@ -77,8 +74,8 @@ public class EmployeeService implements EmployeeDAO {
 			pStmt.setString(3, employeeProfile.getPassword());
 			pStmt.setInt(4, employeeProfile.getSecurityQuestionId());
 			pStmt.setString(5, employeeProfile.getSecurityAnswer());
-			pStmt.setTimestamp(6, date);
-			pStmt.setTimestamp(7, date);
+			pStmt.setTimestamp(6, employeeProfile.getLastModifiedTime());
+			pStmt.setTimestamp(7, employeeProfile.getCreationTime());
 			pStmt.setInt(8, employeeProfile.getEmployeeAccountStatus());
 			pStmt.setInt(9, employeeProfile.getEmployeeType());
 			pStmt.setInt(10, employeeProfile.getApprover1());
@@ -86,8 +83,10 @@ public class EmployeeService implements EmployeeDAO {
 			pStmt.setInt(12, employeeProfile.getApprover3());
 			UpdatedRows = pStmt.executeUpdate();
 
+		} catch(NullPointerException ex){
+			logger.error("Connection Not Found" + ex.getMessage());
 		} catch (SQLException ex) {
-			LogRecord.logger.error(ex.getMessage());
+			logger.error(ex.getMessage());
 		} finally {
 			try {
 				pStmt.close();

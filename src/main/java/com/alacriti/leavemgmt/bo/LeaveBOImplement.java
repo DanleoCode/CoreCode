@@ -12,6 +12,7 @@ import com.alacriti.leavemgmt.util.LeaveStatus;
 import com.alacriti.leavemgmt.valueobject.EmployeeLeaveHistory;
 import com.alacriti.leavemgmt.valueobject.EmployeeProfile;
 import com.alacriti.leavemgmt.valueobject.Leave;
+import com.alacriti.leavemgmt.valueobject.LeaveBalance;
 import com.alacriti.leavemgmt.valueobject.LeaveInstance;
 
 public class LeaveBOImplement {
@@ -23,32 +24,34 @@ public class LeaveBOImplement {
 	}
 
 	public void AddNewLeave(Leave leave) {
-		boolean commitFlag = false;
+		logger.info("it has this id :" + leave.getEmpId());
 		LeaveDAOImplement leaveDAOImplement = new LeaveDAOImplement(this.con);
 		long generatedLeaveId = leaveDAOImplement.AddLeaveInstance(leave);
 
-		logger.info("IN BO method");
-		if (generatedLeaveId > 0) {
-			commitFlag = true;
+		logger.info("IN BO method ADDLEAVEINSTANCE executed : " + generatedLeaveId);
+		if (generatedLeaveId > 0L) {
+			
 			EmployeeBOImplement employeeBO = new EmployeeBOImplement();
 			EmployeeProfile employeeProfile = new EmployeeProfile();
+			logger.info("employee id is " + leave.getEmpId());
 			employeeProfile = employeeBO.getEmployeeProfile(leave.getEmpId());
-
+			
 			LeaveDeligate leaveDeligate = new LeaveDeligate();
+			logger.info("empId is in BOIMPLEMENTED " + employeeProfile);
 			LeaveInstance leaveInstance = leaveDeligate.createNewLeaveInstance(
 					employeeProfile, generatedLeaveId, leave);
 
 			int numOfRowsUpdated = leaveDAOImplement
 					.addNewEmployeeLeaveInstance(leaveInstance);
-			if (numOfRowsUpdated != 1) {
-				commitFlag = false;
-			}
-		}
-		if (commitFlag) {
-			ConnectionHelper.commitConnection(con);
-
-		} else
+			if (numOfRowsUpdated == 1) {
+				ConnectionHelper.commitConnection(con);
+			} else 
+				ConnectionHelper.rollbackConnection(con);
+		}else{
+			logger.info("in else part");
 			ConnectionHelper.rollbackConnection(con);
+		}
+		ConnectionHelper.finalizeConnection(con);
 	}
 
 	public LeaveInstance updateLeaveStatus(LeaveInstance leaveInstance) {
@@ -78,5 +81,10 @@ public class LeaveBOImplement {
 		list = leaveDAOImplement.getAllLeaves(empId);
 		ConnectionHelper.finalizeConnection(con);
 		return list;
+	}
+	
+	public LeaveBalance getLeaveBalance(int empId, int year){
+		LeaveDAOImplement leaveDAOImplement = new LeaveDAOImplement(con);
+		return leaveDAOImplement.getLeaveBalance(empId, year);
 	}
 }

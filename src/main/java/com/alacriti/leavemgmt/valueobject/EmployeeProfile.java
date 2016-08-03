@@ -128,6 +128,12 @@ public class EmployeeProfile extends EmployeeInfo{
 	public void setApprover3(int approver3) {
 		this.approver3 = approver3;
 	}
+
+	@Override
+	public String toString() {
+		return "EmployeeProfile [loginId=" + loginId + ", password=" + password
+				+ ", creationTime=" + creationTime + "]";
+	}
 	
 	
 }

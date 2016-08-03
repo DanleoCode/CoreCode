@@ -18,7 +18,7 @@ public class AuthDeligate {
 		String passwd = tempCred.getPass();
 		EmployeeProfile employeeProfile = employeeBOImplement.AutherizedAccess(loginId, passwd);
 		session.setEmpId(employeeProfile.getEmpId());
-		if(employeeProfile != null){
+		if(employeeProfile.getEmpId() > 0){
 			SessionBOImplement sessionBOImplement = new SessionBOImplement();
 			sessionBOImplement.createUserSession(session, employeeProfile);
 		}

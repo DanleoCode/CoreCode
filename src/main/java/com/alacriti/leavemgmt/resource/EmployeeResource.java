@@ -11,6 +11,7 @@ import javax.ws.rs.Produces;
 import org.apache.log4j.Logger;
 
 import com.alacriti.leavemgmt.bo.EmployeeBOImplement;
+import com.alacriti.leavemgmt.deligate.EmployeeDeligate;
 import com.alacriti.leavemgmt.util.LogRecord;
 import com.alacriti.leavemgmt.valueobject.EmployeeInfo;
 import com.alacriti.leavemgmt.valueobject.EmployeeProfile;
@@ -49,12 +50,6 @@ public class EmployeeResource {
 	@Path(URLConstant.PROFILE)
 	/*Resource Path : "/employee/profile/{employeeId}" */	
 	public EmployeeProfile EmployeeProfile(@PathParam("employeeId") int empId){
-		LogRecord.logger.warn("im warning");
-		LogRecord.logger.info("i m Info");
-		//LogRecord.logger.debug("i m debug");
-		//LogRecord.logger.trace("i m trace");
-		LogRecord.logger.fatal("i m fatal");
-		LogRecord.logger.error("i m error");
 		EmployeeBOImplement Bo = new EmployeeBOImplement();
 		return Bo.getEmployeeProfile(empId);
 	}
@@ -62,11 +57,11 @@ public class EmployeeResource {
 	@POST
 	@Produces("application/json")
 	@Consumes("application/json")
-	/* Resource Path : /employee*/
+	/* Resource Path : /employee */
 	public EmployeeInfo PostEmployee(EmployeeProfile employeeInfo){
-		EmployeeBOImplement Bo = new EmployeeBOImplement();
-		Bo.addEmployee(employeeInfo);
-		return employeeInfo;
+		EmployeeInfo empProfile = new EmployeeProfile();
+		empProfile = EmployeeDeligate.createNewEmployee(employeeInfo); 
+		return empProfile;
 	}
 	
 	

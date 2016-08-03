@@ -10,4 +10,6 @@ public class URLConstant {
 												/*"URL : {employeeId}/update */
 	public static final String LEAVE = EMPLOYEE + "/{employeeId}/leave";
 											/*URL : /employee/{employeeId}/leave */
+	public static final String LEAVE_BALANCE = "leavebalance";
+											/*URL : /employee/{employeeId}/leavebalance */
 }

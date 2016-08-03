@@ -14,10 +14,12 @@ import org.apache.log4j.Logger;
 import com.alacriti.leavemgmt.deligate.LeaveDeligate;
 import com.alacriti.leavemgmt.valueobject.EmployeeProfile;
 import com.alacriti.leavemgmt.valueobject.Leave;
+import com.alacriti.leavemgmt.valueobject.LeaveBalance;
 import com.alacriti.leavemgmt.valueobject.LeaveInstance;
 import com.alacriti.leavemgmt.valueobject.URLConstant;
 
 @Path(URLConstant.LEAVE)
+/*URL : employee/{employeeId}/leave */
 public class LeaveResource {
 
 	public static Logger logger = Logger.getLogger(LeaveDeligate.class);
@@ -57,5 +59,14 @@ public class LeaveResource {
 		EmployeeProfile profile = new EmployeeProfile();
 		profile.setEmpId(employeeId);
 		return leaveDeligate.getEmployeeLeaveHistory(profile);
+	}
+	
+	@GET
+	@Produces("application/json")
+	@Path(URLConstant.LEAVE_BALANCE)
+	/*URL : employee/{employeeId}/leavebalance */
+	public LeaveBalance getLeaveBalance(@PathParam("employeeId") int employeeId){
+		LeaveDeligate deligate = new LeaveDeligate();
+		return deligate.getLeaveBalance(employeeId);
 	}
 }

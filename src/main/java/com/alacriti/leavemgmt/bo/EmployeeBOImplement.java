@@ -23,19 +23,27 @@ public class EmployeeBOImplement {
 		employeeProfile.setEmpId(generatedEmpId);
 		if (generatedEmpId > 0) {
 			int updatedRow = employeeService.addEmployeeProfile(employeeProfile);
+			logger.info("number of affacted rows : " + updatedRow);
 			if (updatedRow == 1) {
 				employeeProfile.setEmpId(generatedEmpId);
+				try {
+					this.con.commit();
+				} catch(NullPointerException ex){
+					logger.error("Connection Not Found : " + ex.getMessage());
+				} catch (SQLException ex) {
+					logger.error("SQLException : " +ex.getMessage());
+				}
+			}else{
+				employeeProfile.setEmpId(0);
+				try {
+					this.con.rollback();
+				} catch (SQLException e) {
+					
+				}
 			}
 		}
-		else{
-			//rollback
-		}
-		try {
-			this.con.commit();
-			ConnectionHelper.finalizeConnection(con);
-		} catch (SQLException ex) {
-			System.out.println(ex);
-		}
+		
+		ConnectionHelper.finalizeConnection(con);
 		return employeeProfile;
 	}
 	
@@ -75,10 +83,13 @@ public class EmployeeBOImplement {
 		logger.info("Emp id is : "  + empId);
 		if(empId > 0){
 			employeeProfile = employeeService.employeeDetail(empId);
+			logger.info("id is greater then 0");
 		}
 		else{
-			
+			logger.info("will not create session");
 		}
+		ConnectionHelper.finalizeConnection(con);
+		logger.info(employeeProfile);
 		return employeeProfile;
 	}
 }

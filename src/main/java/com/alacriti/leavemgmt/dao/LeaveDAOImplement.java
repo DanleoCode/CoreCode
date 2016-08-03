@@ -13,6 +13,7 @@ import org.apache.log4j.Logger;
 import com.alacriti.leavemgmt.util.LeaveBoUtility;
 import com.alacriti.leavemgmt.valueobject.EmployeeLeaveHistory;
 import com.alacriti.leavemgmt.valueobject.Leave;
+import com.alacriti.leavemgmt.valueobject.LeaveBalance;
 import com.alacriti.leavemgmt.valueobject.LeaveInstance;
 import com.alacriti.leavemgmt.valueobject.Tables;
 
@@ -33,7 +34,7 @@ public class LeaveDAOImplement {
 		PreparedStatement pStmt = null;
 		String sql = "INSERT INTO "
 				+ Tables.LEAVE_INSTANCE
-				+ "(leave_type_id,start_date,end_date,No_of_days,emp_id,project_id) VALUES(?,?,?,?,?,?)";
+				+ "(leave_type_id,start_date,end_date,No_of_days,emp_id,project_id,message,tag) VALUES(?,?,?,?,?,?,?,?)";
 		try {
 			pStmt = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 			pStmt.setShort(1, leave.getLeaveTypeId());
@@ -42,6 +43,8 @@ public class LeaveDAOImplement {
 			pStmt.setShort(4, leave.getNoOfDays());
 			pStmt.setInt(5, leave.getEmpId());
 			pStmt.setInt(6, leave.getProjectId());
+			pStmt.setString(7, leave.getMessage());
+			pStmt.setString(8, leave.getTag());
 			pStmt.executeUpdate();
 			ResultSet addLeaveInstanceResult = pStmt.getGeneratedKeys();
 			addLeaveInstanceResult.next();
@@ -185,8 +188,28 @@ public class LeaveDAOImplement {
 		} catch (SQLException ex) {
 			logger.error("SQLException : " + ex.getMessage());
 		} catch(Exception ex){
-			logger.error("Exception Occured : " + ex.getMessage());
+			logger.error("Uncaught Exception : " + ex.getMessage());
 		}
 		return list;
+	}
+	
+	public LeaveBalance getLeaveBalance(int empId, int year){
+		PreparedStatement pStmt = null;
+		LeaveBalance leaveBalance = null;
+		String sql = "SELECT * FROM  " +Tables.EMP_LEAVE + " where emp_id = ? and fin_year = ?";
+		try{
+			pStmt = con.prepareStatement(sql);
+			pStmt.setInt(1, empId);
+			pStmt.setInt(2,year);
+			ResultSet empLeaveResultSet = pStmt.executeQuery();
+			leaveBalance = LeaveBoUtility.getEmployeeBalance(empLeaveResultSet);
+		} catch (NullPointerException ex) {
+			logger.error("Something not correct : " + ex.getMessage());
+		} catch (SQLException ex) {
+			logger.error("SQLException : " + ex.getMessage());
+		} catch(Exception ex){
+			logger.error("Uncaught Exception : " + ex.getMessage());
+		}
+		return leaveBalance;
 	}
 }

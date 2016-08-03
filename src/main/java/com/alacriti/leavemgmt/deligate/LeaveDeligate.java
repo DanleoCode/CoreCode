@@ -2,6 +2,7 @@ package com.alacriti.leavemgmt.deligate;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import javax.ws.rs.core.Response;
@@ -14,6 +15,7 @@ import com.alacriti.leavemgmt.util.LeaveStatus;
 import com.alacriti.leavemgmt.valueobject.EmployeeLeaveHistory;
 import com.alacriti.leavemgmt.valueobject.EmployeeProfile;
 import com.alacriti.leavemgmt.valueobject.Leave;
+import com.alacriti.leavemgmt.valueobject.LeaveBalance;
 import com.alacriti.leavemgmt.valueobject.LeaveInstance;
 
 public class LeaveDeligate {
@@ -22,8 +24,6 @@ public class LeaveDeligate {
 
 	public Response validateLeave(int empId, Leave leave) {
 		if (leave.getEmpId() == empId) {
-			// logger.info("IN DEligate method");
-			System.out.println("IN DEligate method");
 			LeaveBOImplement leaveBOImplement = new LeaveBOImplement();
 			leaveBOImplement.AddNewLeave(leave);
 			return Response.status(Status.OK).entity(leave).build();
@@ -33,6 +33,7 @@ public class LeaveDeligate {
 
 	public LeaveInstance createNewLeaveInstance(
 			EmployeeProfile employeeProfile, long generatedLeaveId, Leave leave) {
+		
 		LeaveInstance leaveInstance = new LeaveInstance();
 		leaveInstance.setEmployeeProfile(employeeProfile);
 		leaveInstance.setLeaveId(generatedLeaveId);
@@ -69,5 +70,12 @@ public class LeaveDeligate {
 					.entity(list)
 					.build();
 		}
+	}
+	
+	public LeaveBalance getLeaveBalance(int empId){
+		int year = Calendar.getInstance().get(Calendar.YEAR);
+		
+		LeaveBOImplement leaveBOImplement = new LeaveBOImplement();
+		return leaveBOImplement.getLeaveBalance(empId, year);
 	}
 }
