@@ -1,5 +1,7 @@
 package com.alacriti.leavemgmt.resource;
 
+import java.util.List;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -11,6 +13,7 @@ import javax.ws.rs.core.Response;
 
 import org.apache.log4j.Logger;
 
+import com.alacriti.leavemgmt.bo.LeaveBOImplement;
 import com.alacriti.leavemgmt.deligate.LeaveDeligate;
 import com.alacriti.leavemgmt.valueobject.EmployeeProfile;
 import com.alacriti.leavemgmt.valueobject.Leave;
@@ -41,19 +44,18 @@ public class LeaveResource {
 		return leaveDeligate.updateLeaveStatus(leaveInstance);
 	}
 	
-//	@GET
-//	@Consumes("application/json")
-//	@Produces("application/json")
-//	public List<LeaveInstance> getListForApprover(@PathParam("employeeId") int employeeId){
-//		logger.info("in resiurce");
-//		LeaveBOImplement leaveBOImplement = new LeaveBOImplement();
-//		return leaveBOImplement.getLeaveApprovalList(employeeId);
-//	}
+	@GET
+	@Consumes("application/json")
+	@Produces("application/json")
+	@Path("approval")
+	public List<LeaveInstance> getListForApprover(@PathParam("employeeId") int employeeId){
+		logger.info("in resiurce");
+		LeaveBOImplement leaveBOImplement = new LeaveBOImplement();
+		return leaveBOImplement.getLeaveApprovalList(employeeId);
+	}
 	
 	@GET
-//	/@Consumes("application/json")
 	@Produces("application/json")
-	
 	public Response getEmployeeLeaveHistory(@PathParam("employeeId") int employeeId){
 		LeaveDeligate leaveDeligate = new LeaveDeligate();
 		EmployeeProfile profile = new EmployeeProfile();

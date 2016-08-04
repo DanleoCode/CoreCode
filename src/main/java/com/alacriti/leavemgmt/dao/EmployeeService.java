@@ -172,12 +172,13 @@ public class EmployeeService implements EmployeeDAO {
 
 	public int authLogin(String loginId, String passwd) {
 		String sql = "SELECT emp_id FROM " + Tables.EMPLOYEE_PROFILE
-				+ " WHERE login_id=? and passwd=?;";
+				+ " WHERE login_id=? and passwd=? and emp_account_status = ?;";
 		PreparedStatement pStmt = null;
 		try {
 			pStmt = con.prepareStatement(sql);
 			pStmt.setString(1, loginId);
 			pStmt.setString(2, passwd);
+			pStmt.setShort(3, (short) 901);
 			ResultSet empProfile = pStmt.executeQuery();
 			logger.info("retrieved id : " );
 			if (empProfile.next()){

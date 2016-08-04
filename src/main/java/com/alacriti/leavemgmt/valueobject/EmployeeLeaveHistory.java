@@ -7,6 +7,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 public class EmployeeLeaveHistory extends Leave{
 	private short leaveStatusCode;
+	private Date applicationDate;
+	private long leaveId;
 	
 	public EmployeeLeaveHistory() {
 		super();
@@ -24,6 +26,22 @@ public class EmployeeLeaveHistory extends Leave{
 
 	public void setLeaveStatusCode(short leaveStatusCode) {
 		this.leaveStatusCode = leaveStatusCode;
+	}
+
+	public Date getApplicationDate() {
+		return applicationDate;
+	}
+
+	public void setApplicationDate(Date applicatonDate) {
+		this.applicationDate = applicatonDate;
+	}
+
+	public long getLeaveId() {
+		return leaveId;
+	}
+
+	public void setLeaveId(long leaveId) {
+		this.leaveId = leaveId;
 	}
 	
 	

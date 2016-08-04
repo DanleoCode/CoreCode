@@ -43,6 +43,7 @@ public class EmployeeDAOProcess implements EmployeeResultProcess {
 		EmployeeProfile employeeProfile = new EmployeeProfile();
 		try{
 			if(employeeProfileRecord.next()){
+				employeeProfile.setEmpId(employeeProfileRecord.getInt("emp_id"));
 				employeeProfile.setLoginId(employeeProfileRecord.getString("login_id"));
 				employeeProfile.setPassword(employeeProfileRecord.getString("passwd"));
 				employeeProfile.setSecurityQuestionId(employeeProfileRecord.getInt("security_question_id"));

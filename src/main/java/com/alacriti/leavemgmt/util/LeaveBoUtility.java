@@ -25,7 +25,7 @@ public class LeaveBoUtility {
 				LeaveInstance leaveInstance = new LeaveInstance();
 				leaveInstance.setEmployeeProfile(employeeProfile);
 				leaveInstance.setLeaveId(rs.getLong("leave_id"));
-				
+				leaveInstance.setLeaveStatusCode(rs.getShort("leave_status_code"));
 				leaveInstance.getEmployeeProfile().setEmpId(rs.getInt("emp_id"));
 				Timestamp timeStamp = rs.getTimestamp("creation_time");
 				leaveInstance.setCreationTime(timeStamp);
@@ -48,12 +48,15 @@ public class LeaveBoUtility {
 			while(empLeaveResultSet.next()){
 				EmployeeLeaveHistory employeeLeaveHistory = new EmployeeLeaveHistory();
 				employeeLeaveHistory.setEmpId(empLeaveResultSet.getInt("emp_id"));
+				employeeLeaveHistory.setLeaveId(empLeaveResultSet.getLong("leave_id"));
 				employeeLeaveHistory.setLeaveStatusCode(empLeaveResultSet.getShort("leave_status_code"));
+				employeeLeaveHistory.setLeaveTypeId(empLeaveResultSet.getShort("leave_type_id"));
 				employeeLeaveHistory.setStartdate(empLeaveResultSet.getDate("start_date"));
 				employeeLeaveHistory.setEndDate(empLeaveResultSet.getDate("end_date"));
 				employeeLeaveHistory.setNoOfDays(empLeaveResultSet.getShort("No_of_days"));
 				employeeLeaveHistory.setMessage(empLeaveResultSet.getString("message"));
 				employeeLeaveHistory.setTag(empLeaveResultSet.getString("tag"));
+				employeeLeaveHistory.setApplicationDate(empLeaveResultSet.getDate("creation_time"));
 				list.add(employeeLeaveHistory);
 			}
 		}catch(NullPointerException ex){

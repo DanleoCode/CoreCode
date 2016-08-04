@@ -132,8 +132,15 @@ public class EmployeeProfile extends EmployeeInfo{
 	@Override
 	public String toString() {
 		return "EmployeeProfile [loginId=" + loginId + ", password=" + password
-				+ ", creationTime=" + creationTime + "]";
+				+ ", securityQuestionId=" + securityQuestionId
+				+ ", securityAnswer=" + securityAnswer + ", lastModifiedTime="
+				+ lastModifiedTime + ", creationTime=" + creationTime
+				+ ", employeeAccountStatus=" + employeeAccountStatus
+				+ ", employeeType=" + employeeType + ", approver1=" + approver1
+				+ ", approver2=" + approver2 + ", approver3=" + approver3 + ",empId="+super.getEmpId()+"]";
 	}
+
+	
 	
 	
 }
