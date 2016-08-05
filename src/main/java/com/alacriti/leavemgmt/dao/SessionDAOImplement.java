@@ -7,6 +7,7 @@ import java.sql.SQLException;
 
 import org.apache.log4j.Logger;
 
+import com.alacriti.leavemgmt.bo.ConnectionHelper;
 import com.alacriti.leavemgmt.util.SessionBOUtility;
 import com.alacriti.leavemgmt.valueobject.EmployeeProfile;
 import com.alacriti.leavemgmt.valueobject.Tables;
@@ -31,6 +32,7 @@ public class SessionDAOImplement {
 				+ "(emp_id,emp_type,emp_login_ip,emp_privilege_type,session_creation_time,emp_session_id,last_modified_time )"
 				+ " VALUES (?,?,?,?,?,?,?)";
 		try{
+			logger.info("in session dao");
 			pStmt = con.prepareStatement(sql);
 			pStmt.setInt(1, userSession.getEmpId());
 			pStmt.setInt(2, employeeProfile.getEmployeeType());
@@ -47,11 +49,7 @@ public class SessionDAOImplement {
 		} catch(Exception ex){
 			logger.error("UnCaught Exception :" + ex.getMessage());
 		} finally{
-			try {
-				pStmt.close();
-			} catch (SQLException ex) {
-				logger.error("NO worries." + ex.getMessage());
-			}
+			ConnectionHelper.closePreparedStatement(pStmt);
 		}
 		return numberRowsUpdated;
 	}
@@ -73,11 +71,7 @@ public class SessionDAOImplement {
 		} catch(Exception ex){
 			logger.error("UnCaught Exception :" + ex.getMessage());
 		} finally{
-			try {
-				pStmt.close();
-			} catch (SQLException ex) {
-				logger.error("NO worries." + ex.getMessage());
-			}
+			ConnectionHelper.closePreparedStatement(pStmt);
 		}
 		return userSession;
 	}

@@ -19,6 +19,7 @@ public class AuthDeligate {
 		EmployeeProfile employeeProfile = employeeBOImplement.AutherizedAccess(loginId, passwd);
 		session.setEmpId(employeeProfile.getEmpId());
 		if(employeeProfile.getEmpId() > 0){
+			logger.info("valid user");
 			SessionBOImplement sessionBOImplement = new SessionBOImplement();
 			sessionBOImplement.createUserSession(session, employeeProfile);
 		}

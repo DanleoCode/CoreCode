@@ -9,28 +9,41 @@ import java.util.List;
 import org.apache.log4j.Logger;
 
 import com.alacriti.leavemgmt.deligate.LeaveDeligate;
+import com.alacriti.leavemgmt.valueobject.Employee;
 import com.alacriti.leavemgmt.valueobject.EmployeeLeaveHistory;
 import com.alacriti.leavemgmt.valueobject.EmployeeProfile;
+import com.alacriti.leavemgmt.valueobject.Leave;
 import com.alacriti.leavemgmt.valueobject.LeaveBalance;
-import com.alacriti.leavemgmt.valueobject.LeaveInstance;
+import com.alacriti.leavemgmt.valueobject.LeaveHistory;
 
 public class LeaveBoUtility {
 	public static Logger logger = Logger.getLogger(LeaveDeligate.class);
 	
-	public static List<LeaveInstance> getLeaveApprovalList(ResultSet rs) {
-		List<LeaveInstance> list = new ArrayList<LeaveInstance>();
+	public static List<Employee> getLeaveApprovalList(ResultSet rs) {
+		List<Employee> list = new ArrayList<Employee>();
 		try{
 			while (rs.next()) {
+				Employee employee = new Employee();
 				EmployeeProfile employeeProfile = new EmployeeProfile();
-				LeaveInstance leaveInstance = new LeaveInstance();
-				leaveInstance.setEmployeeProfile(employeeProfile);
-				leaveInstance.setLeaveId(rs.getLong("leave_id"));
-				leaveInstance.setLeaveStatusCode(rs.getShort("leave_status_code"));
-				leaveInstance.getEmployeeProfile().setEmpId(rs.getInt("emp_id"));
+				LeaveHistory leaveHistory = new LeaveHistory();
+				
+				//leaveHistory.setEmployeeProfile(employeeProfile);
+				int empId = rs.getInt("emp_id");
+				employeeProfile.setEmpId(empId);;
+				
+				leaveHistory.setLeaveId(rs.getLong("leave_id"));
+				leaveHistory.setLeaveStatusCode(rs.getShort("leave_status_code"));
+				
+				
+				//leaveHistory.setEmployeeProfile(employeeProfile);
 				Timestamp timeStamp = rs.getTimestamp("creation_time");
-				leaveInstance.setCreationTime(timeStamp);
+				leaveHistory.setCreationTime(timeStamp);
+				
+				employee.setLeaveHistory(leaveHistory);
+				employee.setEmployeeProfile(employeeProfile);
+				
 				logger.info("here is my date" + Timestamp.valueOf(timeStamp.toString()));
-				list.add(leaveInstance);
+				list.add(employee);
 			}
 		}catch(NullPointerException ex){
 			logger.error("ResultSet Empty : " + ex.getMessage());
@@ -90,4 +103,24 @@ public class LeaveBoUtility {
 		return leaveBalance;
 	}
 	
+	public static Leave getLeaveInstanceData(ResultSet rs){
+		Leave leave = new Leave();
+		try{
+			if(rs.next()){
+				leave.setEmpId(rs.getInt("emp_id"));
+				leave.setEndDate(rs.getDate("end_date"));
+				leave.setLeaveTypeId(rs.getShort("leave_type_id"));
+				leave.setMessage(rs.getString("message"));
+				leave.setNoOfDays(rs.getShort("no_of_days"));
+				leave.setProjectId(rs.getInt("project_id"));
+				leave.setStartdate(rs.getDate("start_date"));
+				leave.setTag(rs.getString("tag"));
+			}
+		} catch(NullPointerException ex){
+			logger.info("Resultset empty : " + ex.getMessage());
+		} catch(SQLException ex){
+			logger.error("SQLException : "+ ex.getMessage());
+		}
+		return leave;
+	}
 }

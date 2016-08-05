@@ -1,7 +1,5 @@
 package com.alacriti.leavemgmt.dao;
 
-import java.sql.ResultSet;
-
 import com.alacriti.leavemgmt.valueobject.EmployeeInfo;
 import com.alacriti.leavemgmt.valueobject.EmployeeProfile;
 
@@ -11,9 +9,9 @@ public interface EmployeeDAO {
 	
 	public int addEmployeeProfile(EmployeeProfile employeeProfile);
 	
-	public ResultSet selectEmployeeInfo(int empId);
+	public EmployeeInfo selectEmployeeInfo(int empId);
 	
-	public ResultSet selectEmployeeProfile(int empId);
+	public EmployeeProfile selectEmployeeProfile(int empId);
 	
 	public void updateEmployeeProfile();
 	

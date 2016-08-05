@@ -45,28 +45,32 @@ public class Filter implements ContainerRequestFilter {
 		} else {
 			try {
 				String sessionId = httpSession.getId();
-				logger.info("sessionId " + sessionId);
 				int empId = (int) httpSession.getAttribute("empId");
-				logger.info("empId" + empId);
-				UserSession userSession = AuthDeligate.getSession(sessionId);
-				if (userSession == null) {
-					logger.info("Session Not Found");
-					containerRequestContext.abortWith(Response.status(Status.UNAUTHORIZED).build());
-				} else {
-					logger.info("Session Exist " + userSession.getEmpId());
+				if (empId > 0) {
+					logger.info("empId" + empId);
+					UserSession userSession = AuthDeligate
+							.getSession(sessionId);
+					if (userSession.getEmpId() >= 0) {
+						logger.info("Session Not Found");
+						containerRequestContext.abortWith(Response.status(
+								Status.UNAUTHORIZED).build());
+					} else {
+						logger.info("Session Exist " + userSession.getEmpId());
+					}
+					logger.info("Session: " + empId);
 				}
-				logger.info("Session: " + empId);
 			} catch (NullPointerException ex) {
 				logger.error("No Session" + ex.getMessage());
-				containerRequestContext.abortWith(Response.status(Status.UNAUTHORIZED).build());
+				containerRequestContext.abortWith(Response.status(
+						Status.UNAUTHORIZED).build());
 			} catch (IllegalStateException ex) {
 				logger.info("Session not exist");
-				containerRequestContext.abortWith(Response.status(Status.UNAUTHORIZED).build());
+				containerRequestContext.abortWith(Response.status(
+						Status.UNAUTHORIZED).build());
 			} finally {
 
 			}
 		}
-
 
 	}
 

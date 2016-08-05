@@ -12,7 +12,6 @@ import org.apache.log4j.Logger;
 
 import com.alacriti.leavemgmt.bo.EmployeeBOImplement;
 import com.alacriti.leavemgmt.deligate.EmployeeDeligate;
-import com.alacriti.leavemgmt.util.LogRecord;
 import com.alacriti.leavemgmt.valueobject.EmployeeInfo;
 import com.alacriti.leavemgmt.valueobject.EmployeeProfile;
 import com.alacriti.leavemgmt.valueobject.URLConstant;

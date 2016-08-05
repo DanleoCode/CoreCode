@@ -5,7 +5,7 @@ import java.sql.SQLException;
 
 import org.apache.log4j.Logger;
 
-import com.alacriti.leavemgmt.dao.EmployeeService;
+import com.alacriti.leavemgmt.dao.EmployeeDAOImplement;
 import com.alacriti.leavemgmt.valueobject.EmployeeInfo;
 import com.alacriti.leavemgmt.valueobject.EmployeeProfile;
 
@@ -17,7 +17,7 @@ public class EmployeeBOImplement {
 	}
 
 	public EmployeeInfo addEmployee(EmployeeProfile employeeProfile) {
-		EmployeeService employeeService = new EmployeeService(con);
+		EmployeeDAOImplement employeeService = new EmployeeDAOImplement(con);
 		int generatedEmpId = 0;
 		generatedEmpId = employeeService.addEmployeeInfo(employeeProfile);
 		employeeProfile.setEmpId(generatedEmpId);
@@ -48,23 +48,21 @@ public class EmployeeBOImplement {
 	}
 	
 	public EmployeeInfo getEmployeeInfo(int empId){
-		EmployeeService empSrv = new EmployeeService(con);
-		EmployeeDAOProcess empDAOProcess = new EmployeeDAOProcess();
-		EmployeeInfo employeeInfo = empDAOProcess.getSelectEmployeeInfoData(empSrv.selectEmployeeInfo(empId));
+		EmployeeDAOImplement employeeDAOImplement = new EmployeeDAOImplement(con);
+		EmployeeInfo employeeInfo = employeeDAOImplement.selectEmployeeInfo(empId);
 		ConnectionHelper.finalizeConnection(con);
 		return employeeInfo;
 	}
 	
 	public EmployeeProfile getEmployeeProfile(int empId){
-		EmployeeService empSrv = new EmployeeService(con);
-		EmployeeDAOProcess empDAOProcess = new EmployeeDAOProcess();
-		EmployeeProfile employeeProfile = empDAOProcess.getSelectEmployeeProfileData(empSrv.selectEmployeeProfile(empId));
+		EmployeeDAOImplement employeeDAOImplement = new EmployeeDAOImplement(con);
+		EmployeeProfile employeeProfile = employeeDAOImplement.selectEmployeeProfile(empId);
 		ConnectionHelper.finalizeConnection(con);
 		return employeeProfile;
 	}
 	
 	public EmployeeProfile updateEmployeeInfo(EmployeeProfile employeeProfile){
-		EmployeeService empSrv = new EmployeeService(con);
+		EmployeeDAOImplement empSrv = new EmployeeDAOImplement(con);
 		int updatedRows = empSrv.updateEmployeeInfo(employeeProfile);
 		System.out.println(updatedRows);
 		try {
@@ -77,7 +75,7 @@ public class EmployeeBOImplement {
 	}
 	
 	public EmployeeProfile AutherizedAccess(String loginId, String passwd){
-		EmployeeService employeeService  = new EmployeeService(con);
+		EmployeeDAOImplement employeeService  = new EmployeeDAOImplement(con);
 		EmployeeProfile employeeProfile = new EmployeeProfile();
 		int empId = employeeService.authLogin(loginId, passwd);
 		logger.info("Emp id is : "  + empId);

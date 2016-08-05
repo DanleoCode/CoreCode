@@ -12,11 +12,12 @@ import org.apache.log4j.Logger;
 
 import com.alacriti.leavemgmt.bo.LeaveBOImplement;
 import com.alacriti.leavemgmt.util.LeaveStatus;
+import com.alacriti.leavemgmt.valueobject.Employee;
 import com.alacriti.leavemgmt.valueobject.EmployeeLeaveHistory;
 import com.alacriti.leavemgmt.valueobject.EmployeeProfile;
 import com.alacriti.leavemgmt.valueobject.Leave;
 import com.alacriti.leavemgmt.valueobject.LeaveBalance;
-import com.alacriti.leavemgmt.valueobject.LeaveInstance;
+import com.alacriti.leavemgmt.valueobject.LeaveHistory;
 
 public class LeaveDeligate {
 
@@ -31,10 +32,10 @@ public class LeaveDeligate {
 		return Response.status(Status.BAD_REQUEST).build();
 	}
 
-	public LeaveInstance createNewLeaveInstance(
+	public LeaveHistory createNewLeaveInstance(
 			EmployeeProfile employeeProfile, long generatedLeaveId, Leave leave) {
 		
-		LeaveInstance leaveInstance = new LeaveInstance();
+		LeaveHistory leaveInstance = new LeaveHistory();
 		leaveInstance.setEmployeeProfile(employeeProfile);
 		leaveInstance.setLeaveId(generatedLeaveId);
 		leaveInstance.setLeaveStatusCode(LeaveStatus.inProgress);
@@ -44,12 +45,11 @@ public class LeaveDeligate {
 		return leaveInstance;
 	}
 
-	public LeaveInstance updateLeaveStatus(LeaveInstance leaveInstance) {
-		logger.info("Ind leavedeligate");
-		logger.error("Ind leavedeligate");
+	public LeaveHistory updateLeaveStatus(int employeeId, LeaveHistory leaveInstance) {
+		
+		
 		
 		Timestamp currentTime = new Timestamp(new java.util.Date().getTime());
-		
 		leaveInstance.setLastModified(currentTime);
 		LeaveBOImplement leaveBOImplement = new LeaveBOImplement();
 		leaveBOImplement.updateLeaveStatus(leaveInstance);
@@ -74,8 +74,31 @@ public class LeaveDeligate {
 	
 	public LeaveBalance getLeaveBalance(int empId){
 		int year = Calendar.getInstance().get(Calendar.YEAR);
-		
 		LeaveBOImplement leaveBOImplement = new LeaveBOImplement();
 		return leaveBOImplement.getLeaveBalance(empId, year);
+	}
+	public List<Employee> getLeaveApprovalList(int empId){
+		List<Employee> list= new ArrayList<Employee>();
+		LeaveBOImplement leaveBOImplement =  new LeaveBOImplement();
+		short leaveStatusCode = LeaveStatus.inProgress;
+		
+		List<Employee> list1= new ArrayList<Employee>();
+		list1 = leaveBOImplement.getLeaveApprovalList(empId, leaveStatusCode, "approver1_id");
+		
+		List<Employee> list2= new ArrayList<Employee>();
+		LeaveBOImplement BOImplementLevel2 =  new LeaveBOImplement();
+		leaveStatusCode = LeaveStatus.APPROVER1_APPROVED;
+		list2 = BOImplementLevel2.getLeaveApprovalList(empId, leaveStatusCode, "approver2_id");
+		logger.info(list1);
+		logger.info(list2);
+		list.addAll(list1);
+		list.addAll(list2);
+		logger.info(list);
+		
+		LeaveBOImplement BOImplementLevel3 =  new LeaveBOImplement();
+		leaveStatusCode = LeaveStatus.APPROVER2_APPROVED;
+		list1 = BOImplementLevel3.getLeaveApprovalList(empId, leaveStatusCode, "approver3_id");
+		list.addAll(list1);
+		return list;
 	}
 }

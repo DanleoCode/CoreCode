@@ -15,6 +15,12 @@ public class EmployeeDeligate {
 		profile.setEmployeeAccountStatus(AccountStatusCode.NOT_APPROVED);
 		profile.setCreationTime(date);
 		profile.setLastModifiedTime(date);
+		profile.setProjectId(1);
+		profile.setSecurityQuestionId(940);
+		profile.setEmployeeType((short)961);
+		profile.setApprover1(19);
+		profile.setApprover2(19);
+		profile.setApprover3(19);
 		
 		EmployeeInfo employeeProfile = new EmployeeProfile();
 		

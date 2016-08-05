@@ -9,13 +9,13 @@ import org.apache.log4j.Logger;
 
 import com.alacriti.leavemgmt.dao.LeaveDAOImplement;
 import com.alacriti.leavemgmt.deligate.LeaveDeligate;
-import com.alacriti.leavemgmt.util.LeaveStatus;
+import com.alacriti.leavemgmt.valueobject.Employee;
 import com.alacriti.leavemgmt.valueobject.EmployeeInfo;
 import com.alacriti.leavemgmt.valueobject.EmployeeLeaveHistory;
 import com.alacriti.leavemgmt.valueobject.EmployeeProfile;
 import com.alacriti.leavemgmt.valueobject.Leave;
 import com.alacriti.leavemgmt.valueobject.LeaveBalance;
-import com.alacriti.leavemgmt.valueobject.LeaveInstance;
+import com.alacriti.leavemgmt.valueobject.LeaveHistory;
 
 public class LeaveBOImplement {
 	private Connection con;
@@ -41,7 +41,7 @@ public class LeaveBOImplement {
 			logger.info("employee is " + employeeProfile + " ID IS " + employeeProfile.getEmpId());
 			LeaveDeligate leaveDeligate = new LeaveDeligate();
 			logger.info("empId is in BOIMPLEMENTED " + employeeProfile);
-			LeaveInstance leaveInstance = leaveDeligate.createNewLeaveInstance(
+			LeaveHistory leaveInstance = leaveDeligate.createNewLeaveInstance(
 					employeeProfile, generatedLeaveId, leave);
 
 			int numOfRowsUpdated = leaveDAOImplement
@@ -57,7 +57,7 @@ public class LeaveBOImplement {
 		ConnectionHelper.finalizeConnection(con);
 	}
 
-	public LeaveInstance updateLeaveStatus(LeaveInstance leaveInstance) {
+	public LeaveHistory updateLeaveStatus(LeaveHistory leaveInstance) {
 
 		LeaveDAOImplement leaveDAOImplement = new LeaveDAOImplement(con);
 		int updatedRows = leaveDAOImplement.updateLeaveStatus(leaveInstance);
@@ -67,29 +67,29 @@ public class LeaveBOImplement {
 		return leaveInstance;
 	}
 
-	public List<LeaveInstance> getLeaveApprovalList(int employeeId){
-		List<LeaveInstance> list = new ArrayList<LeaveInstance>();
+	public List<Employee> getLeaveApprovalList(int employeeId, short leaveStatusCode, String approverLevel){
+		List<Employee> list = new ArrayList<Employee>();
 		LeaveDAOImplement leaveDAOImplement = new LeaveDAOImplement(con);
-		short leaveStatusCode = LeaveStatus.inProgress;
-		list = leaveDAOImplement.getPendingLeaveApproval(employeeId, leaveStatusCode);
-		Iterator<LeaveInstance> iterator = list.iterator();
+		list = leaveDAOImplement.getPendingLeaveApproval(employeeId, leaveStatusCode, approverLevel);
+		Iterator<Employee> iterator = list.iterator();
 		EmployeeBOImplement employeeBOImplement = new EmployeeBOImplement();
 		logger.info("got the list of " + list.size());
 		while(iterator.hasNext()){
-			LeaveInstance leaveInstance = iterator.next();
-			int empId = leaveInstance.getEmployeeProfile().getEmpId();
+			Employee employee = iterator.next();
+			int empId = employee.getEmployeeProfile().getEmpId();
 			EmployeeInfo employeeInfo = employeeBOImplement.getEmployeeInfo(empId);
-			leaveInstance.getEmployeeProfile().setFirstName(employeeInfo.getFirstName()); /* EmployeeInfo is super class so have to set attribute*/
-			leaveInstance.getEmployeeProfile().setLastName(employeeInfo.getLastName());   /* manually */
+			Leave leave = leaveDAOImplement.getLeaveById(employee.getLeaveHistory().getLeaveId());
+			employee.setEmployeeInfo(employeeInfo);
+			employee.setLeave(leave);
 		}
 		ConnectionHelper.finalizeConnection(con);
 		return list;
 	}
 	
-	public List<EmployeeLeaveHistory> getEmployeeLeaveHistory(int empId){
+	public List<EmployeeLeaveHistory> getEmployeeLeaveHistory(int id){
 		List<EmployeeLeaveHistory> list = new ArrayList<EmployeeLeaveHistory>();
 		LeaveDAOImplement leaveDAOImplement  =new LeaveDAOImplement(con);
-		list = leaveDAOImplement.getAllLeaves(empId);
+		list = leaveDAOImplement.getAllLeaves(id);
 		ConnectionHelper.finalizeConnection(con);
 		return list;
 	}

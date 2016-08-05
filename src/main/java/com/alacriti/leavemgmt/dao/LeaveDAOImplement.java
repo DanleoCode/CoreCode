@@ -10,11 +10,13 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
+import com.alacriti.leavemgmt.bo.ConnectionHelper;
 import com.alacriti.leavemgmt.util.LeaveBoUtility;
+import com.alacriti.leavemgmt.valueobject.Employee;
 import com.alacriti.leavemgmt.valueobject.EmployeeLeaveHistory;
 import com.alacriti.leavemgmt.valueobject.Leave;
 import com.alacriti.leavemgmt.valueobject.LeaveBalance;
-import com.alacriti.leavemgmt.valueobject.LeaveInstance;
+import com.alacriti.leavemgmt.valueobject.LeaveHistory;
 import com.alacriti.leavemgmt.valueobject.Tables;
 
 public class LeaveDAOImplement {
@@ -54,17 +56,12 @@ public class LeaveDAOImplement {
 		} catch (SQLException ex) {
 			logger.error("SQLEXCEPTION OCCURED:" + ex.getMessage());
 		} finally {
-			try {
-				pStmt.close();
-			} catch (SQLException e) {
-				logger.error("Unable to close PreparedStatement. "
-						+ e.getMessage());
-			}
+			ConnectionHelper.closePreparedStatement(pStmt);
 		}
 		return generatedLeaveId;
 	}
 
-	public int addNewEmployeeLeaveInstance(LeaveInstance leaveInstance) {
+	public int addNewEmployeeLeaveInstance(LeaveHistory leaveInstance) {
 		int updatedRows = -1;
 		PreparedStatement pStmt = null;
 		String sql = "INSERT INTO " + Tables.EMPLOYEE_LEAVE_INSTANCE
@@ -87,25 +84,13 @@ public class LeaveDAOImplement {
 			logger.debug("SQLException : " + ex.getMessage());
 			logger.error("SQLException : " + ex.getMessage());
 		} finally {
-			try {
-				pStmt.close();
-			} catch (NullPointerException ex) {
-				logger.debug("PerparedStatement not opened : "
-						+ ex.getMessage());
-				logger.error("PerparedStatement not opened : "
-						+ ex.getMessage());
-			} catch (SQLException ex) {
-				logger.debug("PerparedStatement has problem : "
-						+ ex.getMessage());
-				logger.error("PerparedStatement has problem : "
-						+ ex.getMessage());
-			}
+			ConnectionHelper.closePreparedStatement(pStmt);
 		}
 
 		return updatedRows;
 	}
 
-	public int updateLeaveStatus(LeaveInstance leaveInstance) {
+	public int updateLeaveStatus(LeaveHistory leaveInstance) {
 		String sql = "UPDATE "
 				+ Tables.EMPLOYEE_LEAVE_INSTANCE
 				+ " SET leave_status_code = ? , last_modified_time = ? Where leave_Id = ?";
@@ -125,32 +110,27 @@ public class LeaveDAOImplement {
 			logger.info("SQLException : " + ex.getMessage());
 			logger.error("SQLException : " + ex.getMessage());
 		} finally {
-			try {
-				pStmt.close();
-			} catch (NullPointerException ex) {
-				logger.info("PreparedStatement is null.");
-				logger.error("PreparedStatement is null.");
-			} catch (SQLException ex) {
-				logger.error("SQLException : " + ex.getMessage());
-			}
+			ConnectionHelper.closePreparedStatement(pStmt);
 		}
 
 		return updatedRows;
 	}
 
-	public List<LeaveInstance> getPendingLeaveApproval(int empId,
-			short leaveStatusCode) {
+	public List<Employee> getPendingLeaveApproval(int empId,
+			short leaveStatusCode, String approverLevel) {
 		String sql = "select * from " + Tables.EMPLOYEE_LEAVE_INSTANCE
-				+ " where approver1_id = ? AND leave_status_code = ?";
+				+ " where " + approverLevel + " = ? AND leave_status_code = ?";
 		PreparedStatement pStmt = null;
 		ResultSet approver1List = null;
-		List<LeaveInstance> list = null;
+		List<Employee> list = null;
 		try {
 			pStmt = con.prepareStatement(sql);
 			pStmt.setInt(1, empId);
 			pStmt.setShort(2, leaveStatusCode);
+			logger.info(pStmt);
 			approver1List = pStmt.executeQuery();
 			list = LeaveBoUtility.getLeaveApprovalList(approver1List);
+			logger.info("got executed");
 		} catch (NullPointerException ex) {
 			logger.info("Connection not found.");
 			logger.error("Connection not found");
@@ -158,16 +138,8 @@ public class LeaveDAOImplement {
 			logger.info("SQLException : " + ex.getMessage());
 			logger.error("Connection not found");
 		} finally {
-			if (pStmt != null) {
-				try {
-					pStmt.close();
-				} catch (NullPointerException ex) {
-					logger.info("preparedStatement is null.");
-					logger.error("preparedStatement is null");
-				} catch (SQLException ex) {
-					logger.info("SQLException : " + ex.getMessage());
-				}
-			}
+			ConnectionHelper.closePreparedStatement(pStmt);
+			;
 		}
 		return list;
 	}
@@ -187,29 +159,57 @@ public class LeaveDAOImplement {
 			logger.error("Something not correct : " + ex.getMessage());
 		} catch (SQLException ex) {
 			logger.error("SQLException : " + ex.getMessage());
-		} catch(Exception ex){
+		} catch (Exception ex) {
 			logger.error("Uncaught Exception : " + ex.getMessage());
+		} finally {
+			ConnectionHelper.closePreparedStatement(pStmt);
 		}
 		return list;
 	}
-	
-	public LeaveBalance getLeaveBalance(int empId, int year){
+
+	public LeaveBalance getLeaveBalance(int empId, int year) {
 		PreparedStatement pStmt = null;
 		LeaveBalance leaveBalance = null;
-		String sql = "SELECT * FROM  " +Tables.EMP_LEAVE + " where emp_id = ? and fin_year = ?";
-		try{
+		String sql = "SELECT * FROM  " + Tables.EMP_LEAVE
+				+ " where emp_id = ? and fin_year = ?";
+		try {
 			pStmt = con.prepareStatement(sql);
 			pStmt.setInt(1, empId);
-			pStmt.setInt(2,year);
+			pStmt.setInt(2, year);
 			ResultSet empLeaveResultSet = pStmt.executeQuery();
 			leaveBalance = LeaveBoUtility.getEmployeeBalance(empLeaveResultSet);
 		} catch (NullPointerException ex) {
 			logger.error("Something not correct : " + ex.getMessage());
 		} catch (SQLException ex) {
 			logger.error("SQLException : " + ex.getMessage());
-		} catch(Exception ex){
+		} catch (Exception ex) {
 			logger.error("Uncaught Exception : " + ex.getMessage());
+		} finally {
+			ConnectionHelper.closePreparedStatement(pStmt);
 		}
 		return leaveBalance;
+	}
+
+	public Leave getLeaveById(long leaveId) {
+		Leave leave = null;
+		PreparedStatement pStmt = null;
+		String sql = "SELECT * FROM " + Tables.LEAVE_INSTANCE
+				+ " WHERE leave_id = ?;";
+		try {
+			pStmt = con.prepareStatement(sql);
+			pStmt.setLong(1, leaveId);
+			ResultSet leaveResultSet = pStmt.executeQuery();
+			leave = LeaveBoUtility.getLeaveInstanceData(leaveResultSet);
+			leaveResultSet.close();
+		} catch (NullPointerException ex) {
+			logger.error("Something not correct : " + ex.getMessage());
+		} catch (SQLException ex) {
+			logger.error("SQLException : " + ex.getMessage());
+		} catch (Exception ex) {
+			logger.error("Uncaught Exception : " + ex.getMessage());
+		} finally {
+			ConnectionHelper.closePreparedStatement(pStmt);
+		}
+		return leave;
 	}
 }
