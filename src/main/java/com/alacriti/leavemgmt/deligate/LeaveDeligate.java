@@ -23,6 +23,8 @@ public class LeaveDeligate {
 
 	public static Logger logger = Logger.getLogger(LeaveDeligate.class);
 
+	
+	
 	public Response validateLeave(int empId, Leave leave) {
 		if (leave.getEmpId() == empId) {
 			LeaveBOImplement leaveBOImplement = new LeaveBOImplement();
@@ -47,11 +49,28 @@ public class LeaveDeligate {
 
 	public LeaveHistory updateLeaveStatus(int employeeId, LeaveHistory leaveInstance) {
 		
-		
-		
 		Timestamp currentTime = new Timestamp(new java.util.Date().getTime());
 		leaveInstance.setLastModified(currentTime);
 		LeaveBOImplement leaveBOImplement = new LeaveBOImplement();
+		LeaveHistory history = leaveBOImplement.getLeaveHistoryById(leaveInstance.getLeaveId());
+		long currentLeaveStatus = history.getLeaveStatusCode();
+		logger.info("current leave status is: " + currentLeaveStatus);
+		if(leaveInstance.getLeaveStatusCode() == 1){
+			if(currentLeaveStatus == LeaveStatus.inProgress)
+				leaveInstance.setLeaveStatusCode(LeaveStatus.APPROVER1_APPROVED);
+			else if(currentLeaveStatus == LeaveStatus.APPROVER1_APPROVED)
+				leaveInstance.setLeaveStatusCode(LeaveStatus.APPROVER2_APPROVED);
+			else if(currentLeaveStatus == LeaveStatus.APPROVER2_APPROVED)
+				leaveInstance.setLeaveStatusCode(LeaveStatus.APPROVER3_APPROVED);
+		} else if(leaveInstance.getLeaveStatusCode() == 0){
+			if(currentLeaveStatus == LeaveStatus.inProgress)
+				leaveInstance.setLeaveStatusCode(LeaveStatus.APPROVER1_REJECTED);
+			else if(currentLeaveStatus == LeaveStatus.APPROVER1_APPROVED)
+				leaveInstance.setLeaveStatusCode(LeaveStatus.APPROVER2_REJECTED);
+			else if(currentLeaveStatus == LeaveStatus.APPROVER2_APPROVED)
+				leaveInstance.setLeaveStatusCode(LeaveStatus.APPROVER3_REJECTED);
+		}
+		logger.info("new status will be : " + leaveInstance.getLeaveStatusCode());
 		leaveBOImplement.updateLeaveStatus(leaveInstance);
 		
 		return leaveInstance;

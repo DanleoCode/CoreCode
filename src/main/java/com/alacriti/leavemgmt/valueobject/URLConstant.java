@@ -12,4 +12,5 @@ public class URLConstant {
 											/*URL : /employee/{employeeId}/leave */
 	public static final String LEAVE_BALANCE = "balance";
 											/*URL : /employee/{employeeId}/leave/balance */
+	public static final String PROFILES = "/profiles";
 }

@@ -123,4 +123,19 @@ public class LeaveBoUtility {
 		}
 		return leave;
 	}
+	
+	public static LeaveHistory getLeaveHistoryById(ResultSet rs){
+		LeaveHistory history = new LeaveHistory();
+		try{
+			if(rs.next()){
+				history.setLeaveStatusCode(rs.getShort("leave_status_code"));
+			}
+			return history;
+		} catch(NullPointerException ex){
+			logger.info("Resultset empty : " + ex.getMessage());
+		} catch(SQLException ex){
+			logger.error("SQLException : "+ ex.getMessage());
+		}
+		return history;
+	}
 }

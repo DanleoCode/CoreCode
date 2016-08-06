@@ -29,9 +29,16 @@ public class SessionBOImplement {
 	
 	public UserSession getSession(UserSession session){
 		UserSession userSession = null;
-		String sessionId = session.getEmpSessionId();
+		int empId = session.getEmpId();
 		SessionDAOImplement sessionDAOImplement = new SessionDAOImplement(this.con);
-		userSession = sessionDAOImplement.getSession(sessionId);
+		userSession = sessionDAOImplement.getSession(empId);
 		return userSession;
+	}
+	
+	public int updateSessionBO(UserSession session){
+		int updatedrows  = -1;
+		SessionDAOImplement sessionDAOImplement = new SessionDAOImplement(this.con);
+		updatedrows = sessionDAOImplement.updateSession(session);
+		return updatedrows;
 	}
 }

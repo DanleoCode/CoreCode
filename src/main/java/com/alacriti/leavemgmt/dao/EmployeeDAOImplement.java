@@ -5,6 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.List;
 
 import org.apache.log4j.Logger;
 
@@ -180,7 +181,6 @@ public class EmployeeDAOImplement implements EmployeeDAO {
 			pStmt.setString(2, passwd);
 			pStmt.setShort(3, (short) 901);
 			ResultSet empProfile = pStmt.executeQuery();
-			logger.info("retrieved id : " );
 			if (empProfile.next()){
 				return empProfile.getInt("emp_id");
 			}
@@ -194,14 +194,14 @@ public class EmployeeDAOImplement implements EmployeeDAO {
 		return -1;
 	}
 
-	public EmployeeProfile employeeDetail(int empId) {				//returns a full profile a Employee id = empId
+	public List<EmployeeProfile> employeeDetail(int value, String column) {				//returns a full profile a Employee id = empId
 		String sql = "select * from " + Tables.EMPLOYEE_INFO + " a,"
 				+ Tables.EMPLOYEE_PROFILE
-				+ " b where a.emp_id=b.emp_id and a.emp_id= ?";
+				+ " b where a.emp_id=b.emp_id and a." + column + "= ?";
 		PreparedStatement pStmt = null;
 		try {
 			pStmt = con.prepareStatement(sql);
-			pStmt.setInt(1, empId);
+			pStmt.setInt(1, value);
 			ResultSet empProfile = pStmt.executeQuery();
 			return EmployeeBOUtility.getEmployeeDetail(empProfile);
 		} catch (NullPointerException ex) {
@@ -213,4 +213,25 @@ public class EmployeeDAOImplement implements EmployeeDAO {
 		}
 		return null;
 	}
+	
+	public List<EmployeeProfile> getProfiles() {
+		logger.info("in daoimplement");
+		String sql = "select * from " + Tables.EMPLOYEE_INFO + " a,"
+				+ Tables.EMPLOYEE_PROFILE
+				+ " b where a.emp_id=b.emp_id";
+		PreparedStatement pStmt = null;
+		try {
+			pStmt = con.prepareStatement(sql);
+			ResultSet empProfile = pStmt.executeQuery();
+			return EmployeeBOUtility.getEmployeeDetail(empProfile);
+		} catch (NullPointerException ex) {
+			logger.info("Connection Not Found");
+		} catch (SQLException ex) {
+			logger.error("SQLException " + ex.getMessage());
+		} finally {
+			ConnectionHelper.closePreparedStatement(pStmt);
+		}
+		return null;
+	}
+	
 }

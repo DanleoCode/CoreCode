@@ -2,6 +2,8 @@ package com.alacriti.leavemgmt.bo;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.log4j.Logger;
 
@@ -74,20 +76,26 @@ public class EmployeeBOImplement {
 		return employeeProfile;
 	}
 	
-	public EmployeeProfile AutherizedAccess(String loginId, String passwd){
+	public List<EmployeeProfile> AutherizedAccess(String loginId, String passwd){
 		EmployeeDAOImplement employeeService  = new EmployeeDAOImplement(con);
-		EmployeeProfile employeeProfile = new EmployeeProfile();
+		List<EmployeeProfile> list = new ArrayList<EmployeeProfile>();
 		int empId = employeeService.authLogin(loginId, passwd);
 		logger.info("Emp id is : "  + empId);
 		if(empId > 0){
-			employeeProfile = employeeService.employeeDetail(empId);
+			list = employeeService.employeeDetail(empId,"emp_id");
 			logger.info("id is greater then 0");
 		}
 		else{
 			logger.info("will not create session");
 		}
 		ConnectionHelper.finalizeConnection(con);
-		logger.info(employeeProfile);
-		return employeeProfile;
+		//logger.info(list.get(0));
+		return list;
+	}
+	
+	public List<EmployeeProfile> getProfiles(){
+		logger.info("in BOIMPLEMENT");
+		EmployeeDAOImplement employeeDAOImplement  = new EmployeeDAOImplement(con);
+		return employeeDAOImplement.getProfiles();
 	}
 }

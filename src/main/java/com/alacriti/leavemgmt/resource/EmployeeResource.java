@@ -1,5 +1,7 @@
 package com.alacriti.leavemgmt.resource;
 
+import java.util.List;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -63,5 +65,13 @@ public class EmployeeResource {
 		return empProfile;
 	}
 	
-	
+	@GET
+	@Produces("application/json")
+//	@Path(URLConstant.PROFILES)
+	@Path("/profiles")
+	/*Resource Path : /employee/profiles */
+	public List<EmployeeProfile> getProfiles(){
+		logger.info("hello");
+		return EmployeeDeligate.getProfiles();
+	}
 }

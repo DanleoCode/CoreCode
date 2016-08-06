@@ -212,4 +212,27 @@ public class LeaveDAOImplement {
 		}
 		return leave;
 	}
+	
+	public LeaveHistory getLeaveHistoryById(long leaveId){
+		LeaveHistory history = null;
+		PreparedStatement pStmt = null;
+		String sql = "SELECT * FROM " + Tables.EMPLOYEE_LEAVE_INSTANCE
+				+ " WHERE leave_id = ?;";
+		try {
+			pStmt = con.prepareStatement(sql);
+			pStmt.setLong(1, leaveId);
+			ResultSet leaveResultSet = pStmt.executeQuery();
+			history = LeaveBoUtility.getLeaveHistoryById(leaveResultSet);
+			leaveResultSet.close();
+		} catch (NullPointerException ex) {
+			logger.error("Something not correct : " + ex.getMessage());
+		} catch (SQLException ex) {
+			logger.error("SQLException : " + ex.getMessage());
+		} catch (Exception ex) {
+			logger.error("Uncaught Exception : " + ex.getMessage());
+		} finally {
+			ConnectionHelper.closePreparedStatement(pStmt);
+		}
+		return history;
+	}
 }

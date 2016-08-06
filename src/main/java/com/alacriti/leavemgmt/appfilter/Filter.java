@@ -29,7 +29,7 @@ public class Filter implements ContainerRequestFilter {
 			throws IOException {
 
 		HttpSession httpSession = httpServletRequest.getSession();
-		logger.info(httpSession.getId());
+		logger.info("new session id : " + httpSession.getId());
 
 		String requestForRescource = containerRequestContext.getUriInfo()
 				.getPath();
@@ -44,23 +44,23 @@ public class Filter implements ContainerRequestFilter {
 			logger.info("add new employee");
 		} else {
 			try {
-				String sessionId = httpSession.getId();
-				int empId = (int) httpSession.getAttribute("empId");
-				if (empId > 0) {
-					logger.info("empId" + empId);
-					UserSession userSession = AuthDeligate
-							.getSession(sessionId);
-					if (userSession.getEmpId() >= 0) {
-						logger.info("Session Not Found");
-						containerRequestContext.abortWith(Response.status(
-								Status.UNAUTHORIZED).build());
-					} else {
-						logger.info("Session Exist " + userSession.getEmpId());
-					}
-					logger.info("Session: " + empId);
+				
+				if ((int) httpSession.getAttribute("empId") > 0) {
+					logger.info("++++++++++++++++++++++++++++++hi+++++++++++++++++++++");
+					logger.info("Typw of Employee is : " + (int)httpSession.getAttribute("empId"));
+					String sessionId = httpSession.getId();
+					int empId = (int) httpSession.getAttribute("empId");
+					logger.info("got the empId: " + empId);
+//					UserSession userSession = AuthDeligate.getSession(empId);
+//					if (userSession.getEmpSessionId().equals(sessionId)) {
+//						logger.info("Session Not Found");
+//					} else {
+//						containerRequestContext.abortWith(Response.status(
+//						Status.UNAUTHORIZED).build());
+//					}
 				}
 			} catch (NullPointerException ex) {
-				logger.error("No Session" + ex.getMessage());
+				logger.error("No Session null session " + ex.getMessage());
 				containerRequestContext.abortWith(Response.status(
 						Status.UNAUTHORIZED).build());
 			} catch (IllegalStateException ex) {

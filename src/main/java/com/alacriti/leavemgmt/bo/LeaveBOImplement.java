@@ -98,4 +98,10 @@ public class LeaveBOImplement {
 		LeaveDAOImplement leaveDAOImplement = new LeaveDAOImplement(con);
 		return leaveDAOImplement.getLeaveBalance(empId, year);
 	}
+	
+	public LeaveHistory getLeaveHistoryById(long leaveId){
+		LeaveDAOImplement leaveDAOImplement = new LeaveDAOImplement(con);
+		return leaveDAOImplement.getLeaveHistoryById(leaveId);
+		
+	}
 }
