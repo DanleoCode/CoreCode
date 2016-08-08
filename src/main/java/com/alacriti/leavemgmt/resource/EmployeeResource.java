@@ -14,6 +14,7 @@ import org.apache.log4j.Logger;
 
 import com.alacriti.leavemgmt.bo.EmployeeBOImplement;
 import com.alacriti.leavemgmt.deligate.EmployeeDeligate;
+import com.alacriti.leavemgmt.valueobject.Employee;
 import com.alacriti.leavemgmt.valueobject.EmployeeInfo;
 import com.alacriti.leavemgmt.valueobject.EmployeeProfile;
 import com.alacriti.leavemgmt.valueobject.URLConstant;
@@ -24,12 +25,22 @@ public class EmployeeResource {
 
 	public static Logger logger = Logger.getLogger(EmployeeResource.class);
 	
+	@POST
+	@Produces("application/json")
+	@Consumes("application/json")
+	/* Resource Path : /employee */
+	public EmployeeInfo createEmployee(EmployeeProfile employeeInfo){
+		EmployeeInfo empProfile = new EmployeeProfile();
+		empProfile = EmployeeDeligate.createNewEmployee(employeeInfo); 
+		return empProfile;
+	}
+	
 	@GET
 	@Produces("application/json")
 	@Path(URLConstant.GET_EMPLOYEE_BY_ID)
 	/* Resource Path : "/employee/{employeeId}" */
 	
-	public EmployeeInfo getEmp(@PathParam("employeeId") int id){
+	public EmployeeInfo getEmployeeInfo(@PathParam("employeeId") int id){
 		EmployeeBOImplement Bo = new EmployeeBOImplement();
 		return Bo.getEmployeeInfo(id);
 	}
@@ -50,19 +61,20 @@ public class EmployeeResource {
 	@Produces("application/json")
 	@Path(URLConstant.PROFILE)
 	/*Resource Path : "/employee/profile/{employeeId}" */	
-	public EmployeeProfile EmployeeProfile(@PathParam("employeeId") int empId){
+	public EmployeeProfile getEmployeeProfile(@PathParam("employeeId") int empId){
 		EmployeeBOImplement Bo = new EmployeeBOImplement();
 		return Bo.getEmployeeProfile(empId);
 	}
 	
-	@POST
+	@PUT
 	@Produces("application/json")
 	@Consumes("application/json")
-	/* Resource Path : /employee */
-	public EmployeeInfo PostEmployee(EmployeeProfile employeeInfo){
-		EmployeeInfo empProfile = new EmployeeProfile();
-		empProfile = EmployeeDeligate.createNewEmployee(employeeInfo); 
-		return empProfile;
+	@Path(URLConstant.PROFILE)
+	/*Resource Path : "employee/profile/{employeeId}" */
+	public Employee updateEmployeeProfile(@PathParam("employeeId") int empId, Employee employee){
+		logger.info("Hello update");
+		return EmployeeDeligate.updateEmployee(empId, employee);
+		//return employee;
 	}
 	
 	@GET

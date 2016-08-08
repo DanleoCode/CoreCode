@@ -74,9 +74,11 @@ public class LeaveResource {
 	@GET
 	@Produces("application/json")
 	@Path(URLConstant.LEAVE_BALANCE)
-	/*URL : employee/{employeeId}/leavebalance */
+	/*URL : employee/{employeeId}/leave/balance */
 	public LeaveBalance getLeaveBalance(@PathParam("employeeId") int employeeId){
 		LeaveDeligate deligate = new LeaveDeligate();
 		return deligate.getLeaveBalance(employeeId);
 	}
+	
+	
 }

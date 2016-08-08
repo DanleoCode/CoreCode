@@ -167,6 +167,69 @@ public class LeaveDAOImplement {
 		return list;
 	}
 
+	public int newLeaveBalance(LeaveBalance leaveBalance){
+		int updatedRows = -1;
+		String sql = "INSERT INTO " + Tables.EMP_LEAVE
+				+ "(emp_id, cl, pl, comp_off, met_leave, pet_leave, fin_year, sl)"
+				+ " values (?,?,?,?,?,?,?,?)";
+		PreparedStatement pStmt = null;
+		try{
+			pStmt = con.prepareStatement(sql);
+			pStmt.setInt(1, leaveBalance.getEmpId());
+			pStmt.setShort(2, leaveBalance.getCasualLeave());
+			pStmt.setShort(3, leaveBalance.getPrivilegeLeave());
+			pStmt.setShort(4, leaveBalance.getCompOff());
+			pStmt.setShort(5, leaveBalance.getMetLeave());
+			pStmt.setShort(6, leaveBalance.getPetLeave());
+			pStmt.setInt(7, leaveBalance.getFinancialyear());
+			pStmt.setInt(8, leaveBalance.getSickLeave());
+			
+			logger.info(pStmt);
+			updatedRows = pStmt.executeUpdate();
+			
+		} catch (NullPointerException ex) {
+			logger.error("Something not correct in newLeaveBalance: " + ex.getMessage());
+		} catch (SQLException ex) {
+			logger.error("SQLException : " + ex.getMessage());
+		} catch (Exception ex) {
+			logger.error("Uncaught Exception : " + ex.getMessage());
+		} finally {
+			ConnectionHelper.closePreparedStatement(pStmt);
+		}
+		return updatedRows;
+	}
+	
+	public int updateLeaveBalance(LeaveBalance leaveBalance){
+		int updatedRows = -1;
+		String sql = "UPDATE " + Tables.EMP_LEAVE 
+				+ " set cl=?, pl=?, comp_off=?, met_leave=?, pet_leave=?, fin_year=?, sl=? where emp_id=?";
+		PreparedStatement pStmt = null;
+		try{
+			pStmt = con.prepareStatement(sql);
+			pStmt.setShort(1, leaveBalance.getCasualLeave());
+			pStmt.setShort(2, leaveBalance.getPrivilegeLeave());
+			pStmt.setShort(3, leaveBalance.getCompOff());
+			pStmt.setShort(4, leaveBalance.getMetLeave());
+			pStmt.setShort(5, leaveBalance.getPetLeave());
+			pStmt.setInt(6, leaveBalance.getFinancialyear());
+			pStmt.setInt(7, leaveBalance.getSickLeave());
+			pStmt.setInt(8, leaveBalance.getEmpId());
+			
+			logger.info(pStmt);
+			updatedRows = pStmt.executeUpdate();
+			
+		} catch (NullPointerException ex) {
+			logger.error("Something not correct updateLeaveBalance: " + ex.getMessage());
+		} catch (SQLException ex) {
+			logger.error("SQLException : " + ex.getMessage());
+		} catch (Exception ex) {
+			logger.error("Uncaught Exception : " + ex.getMessage());
+		} finally {
+			ConnectionHelper.closePreparedStatement(pStmt);
+		}
+		return updatedRows;
+	}
+	
 	public LeaveBalance getLeaveBalance(int empId, int year) {
 		PreparedStatement pStmt = null;
 		LeaveBalance leaveBalance = null;
@@ -179,7 +242,7 @@ public class LeaveDAOImplement {
 			ResultSet empLeaveResultSet = pStmt.executeQuery();
 			leaveBalance = LeaveBoUtility.getEmployeeBalance(empLeaveResultSet);
 		} catch (NullPointerException ex) {
-			logger.error("Something not correct : " + ex.getMessage());
+			logger.error("Something not correct getLeaveBalance : " + ex.getMessage());
 		} catch (SQLException ex) {
 			logger.error("SQLException : " + ex.getMessage());
 		} catch (Exception ex) {
@@ -202,7 +265,7 @@ public class LeaveDAOImplement {
 			leave = LeaveBoUtility.getLeaveInstanceData(leaveResultSet);
 			leaveResultSet.close();
 		} catch (NullPointerException ex) {
-			logger.error("Something not correct : " + ex.getMessage());
+			logger.error("Something not correct in getLeaveById: " + ex.getMessage());
 		} catch (SQLException ex) {
 			logger.error("SQLException : " + ex.getMessage());
 		} catch (Exception ex) {
@@ -225,7 +288,7 @@ public class LeaveDAOImplement {
 			history = LeaveBoUtility.getLeaveHistoryById(leaveResultSet);
 			leaveResultSet.close();
 		} catch (NullPointerException ex) {
-			logger.error("Something not correct : " + ex.getMessage());
+			logger.error("Something not correct in LeaveHistoryBYId: " + ex.getMessage());
 		} catch (SQLException ex) {
 			logger.error("SQLException : " + ex.getMessage());
 		} catch (Exception ex) {

@@ -1,7 +1,6 @@
 package com.alacriti.leavemgmt.bo;
 
 import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,20 +27,10 @@ public class EmployeeBOImplement {
 			logger.info("number of affacted rows : " + updatedRow);
 			if (updatedRow == 1) {
 				employeeProfile.setEmpId(generatedEmpId);
-				try {
-					this.con.commit();
-				} catch(NullPointerException ex){
-					logger.error("Connection Not Found : " + ex.getMessage());
-				} catch (SQLException ex) {
-					logger.error("SQLException : " +ex.getMessage());
-				}
+				ConnectionHelper.commitConnection(con);
 			}else{
 				employeeProfile.setEmpId(0);
-				try {
-					this.con.rollback();
-				} catch (SQLException e) {
-					
-				}
+				ConnectionHelper.rollbackConnection(con);
 			}
 		}
 		
@@ -66,12 +55,8 @@ public class EmployeeBOImplement {
 	public EmployeeProfile updateEmployeeInfo(EmployeeProfile employeeProfile){
 		EmployeeDAOImplement empSrv = new EmployeeDAOImplement(con);
 		int updatedRows = empSrv.updateEmployeeInfo(employeeProfile);
-		System.out.println(updatedRows);
-		try {
-			con.commit();
-		} catch (SQLException e) {
-			System.out.println(e.getMessage());
-		}
+		logger.info("Updated Rows : " + updatedRows);
+		ConnectionHelper.commitConnection(con);
 		ConnectionHelper.finalizeConnection(con);
 		return employeeProfile;
 	}
@@ -82,8 +67,8 @@ public class EmployeeBOImplement {
 		int empId = employeeService.authLogin(loginId, passwd);
 		logger.info("Emp id is : "  + empId);
 		if(empId > 0){
-			list = employeeService.employeeDetail(empId,"emp_id");
 			logger.info("id is greater then 0");
+			list = employeeService.employeeDetail(empId,"emp_id");
 		}
 		else{
 			logger.info("will not create session");
@@ -98,4 +83,21 @@ public class EmployeeBOImplement {
 		EmployeeDAOImplement employeeDAOImplement  = new EmployeeDAOImplement(con);
 		return employeeDAOImplement.getProfiles();
 	}
+	
+	public int createEmployeeBalanceRecord(EmployeeProfile profile){
+		int createdRecords = -1;
+		EmployeeDAOImplement employeeDAOImplement  = new EmployeeDAOImplement(con);
+		createdRecords = employeeDAOImplement.createEmployeeBalanceRecord(profile.getEmpId());
+		return createdRecords;
+	}
+	
+	public int updateEmployeeProfile(EmployeeProfile profile){
+		int updatedRows = -1;
+		EmployeeDAOImplement employeeDAOImplement = new EmployeeDAOImplement(con);
+		updatedRows = employeeDAOImplement.updateEmployeeProfile(profile);
+		ConnectionHelper.commitConnection(con);
+		ConnectionHelper.finalizeConnection(con);
+		return updatedRows;
+	}
+	
 }

@@ -95,8 +95,30 @@ public class LeaveBOImplement {
 	}
 	
 	public LeaveBalance getLeaveBalance(int empId, int year){
+		
 		LeaveDAOImplement leaveDAOImplement = new LeaveDAOImplement(con);
-		return leaveDAOImplement.getLeaveBalance(empId, year);
+		LeaveBalance leaveBalance = leaveDAOImplement.getLeaveBalance(empId, year);
+		ConnectionHelper.finalizeConnection(con);
+		return leaveBalance;
+		
+	}
+	
+	public int newLeaveBalance(LeaveBalance leaveBalance){
+		int updatedRows = -1;
+		LeaveDAOImplement leaveDAOImplement = new LeaveDAOImplement(con);
+		updatedRows = leaveDAOImplement.newLeaveBalance(leaveBalance);
+		ConnectionHelper.commitConnection(con);
+		ConnectionHelper.finalizeConnection(con);
+		return updatedRows;
+	}
+	
+	public int updateLeavebalance(LeaveBalance leaveBalance){
+		int updatedRows = -1;
+		LeaveDAOImplement leaveDAOImplement = new LeaveDAOImplement(con);
+		updatedRows = leaveDAOImplement.updateLeaveBalance(leaveBalance);
+		ConnectionHelper.commitConnection(con);
+		ConnectionHelper.finalizeConnection(con);
+		return updatedRows;
 	}
 	
 	public LeaveHistory getLeaveHistoryById(long leaveId){

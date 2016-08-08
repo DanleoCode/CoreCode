@@ -94,7 +94,8 @@ public class LeaveDeligate {
 	public LeaveBalance getLeaveBalance(int empId){
 		int year = Calendar.getInstance().get(Calendar.YEAR);
 		LeaveBOImplement leaveBOImplement = new LeaveBOImplement();
-		return leaveBOImplement.getLeaveBalance(empId, year);
+		LeaveBalance leaveBalance = leaveBOImplement.getLeaveBalance(empId, year);
+		return leaveBalance;
 	}
 	public List<Employee> getLeaveApprovalList(int empId){
 		List<Employee> list= new ArrayList<Employee>();
@@ -108,16 +109,32 @@ public class LeaveDeligate {
 		LeaveBOImplement BOImplementLevel2 =  new LeaveBOImplement();
 		leaveStatusCode = LeaveStatus.APPROVER1_APPROVED;
 		list2 = BOImplementLevel2.getLeaveApprovalList(empId, leaveStatusCode, "approver2_id");
-		logger.info(list1);
-		logger.info(list2);
 		list.addAll(list1);
 		list.addAll(list2);
-		logger.info(list);
 		
 		LeaveBOImplement BOImplementLevel3 =  new LeaveBOImplement();
 		leaveStatusCode = LeaveStatus.APPROVER2_APPROVED;
 		list1 = BOImplementLevel3.getLeaveApprovalList(empId, leaveStatusCode, "approver3_id");
 		list.addAll(list1);
 		return list;
+	}
+	
+	public LeaveBalance updateLeaveBalance(LeaveBalance leaveBalance){
+		LeaveBOImplement leaveBOImplement = new LeaveBOImplement();
+		int updatedRows = -1;
+		int empId = leaveBalance.getEmpId();
+		LeaveBalance balance = getLeaveBalance(empId);
+		
+		if(balance == null){
+			logger.info("Leave record does not exist");
+			updatedRows = leaveBOImplement.newLeaveBalance(leaveBalance);
+		} else{
+			logger.info("Leave record exist");
+			updatedRows = leaveBOImplement.updateLeavebalance(leaveBalance);
+		}
+		
+		if(updatedRows == 1)
+			return leaveBalance;
+		return null;
 	}
 }

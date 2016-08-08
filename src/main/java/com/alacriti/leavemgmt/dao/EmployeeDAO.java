@@ -13,7 +13,7 @@ public interface EmployeeDAO {
 	
 	public EmployeeProfile selectEmployeeProfile(int empId);
 	
-	public void updateEmployeeProfile();
+	public int updateEmployeeProfile(EmployeeProfile profile);
 	
 	public int updateEmployeeInfo(EmployeeInfo employeeInfo);
 }

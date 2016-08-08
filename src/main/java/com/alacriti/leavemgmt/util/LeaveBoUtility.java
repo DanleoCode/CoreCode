@@ -83,9 +83,10 @@ public class LeaveBoUtility {
 	}
 	
 	public static LeaveBalance getEmployeeBalance(ResultSet employeeLeaveBalance){
-		LeaveBalance leaveBalance = new LeaveBalance();
+		LeaveBalance leaveBalance = null;
 		try{
 			if(employeeLeaveBalance.next()){
+				leaveBalance = new LeaveBalance();
 				leaveBalance.setEmpId(employeeLeaveBalance.getShort("emp_id"));
 				leaveBalance.setCasualLeave(employeeLeaveBalance.getShort("cl"));
 				leaveBalance.setCompOff(employeeLeaveBalance.getShort("comp_off"));
@@ -104,9 +105,10 @@ public class LeaveBoUtility {
 	}
 	
 	public static Leave getLeaveInstanceData(ResultSet rs){
-		Leave leave = new Leave();
+		Leave leave = null;
 		try{
 			if(rs.next()){
+				leave = new Leave();
 				leave.setEmpId(rs.getInt("emp_id"));
 				leave.setEndDate(rs.getDate("end_date"));
 				leave.setLeaveTypeId(rs.getShort("leave_type_id"));

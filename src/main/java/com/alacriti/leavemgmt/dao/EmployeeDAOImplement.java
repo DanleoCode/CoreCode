@@ -5,6 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Calendar;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -139,9 +140,36 @@ public class EmployeeDAOImplement implements EmployeeDAO {
 	}
 
 	@Override
-	public void updateEmployeeProfile() {
-		// TODO Auto-generated method stub
-
+	public int updateEmployeeProfile(EmployeeProfile profile) {
+		PreparedStatement pStmt = null;
+		int updatedRows = -1;
+		String sql = "UPDATE "
+				+ Tables.EMPLOYEE_PROFILE
+				+ " set last_modified = ?, emp_account_status = ?, emp_type = ?, approver1_id = ?, approver2_id =?, approver3_id = ?"
+				+ " where emp_id=?";
+		
+		
+		try{
+			pStmt = con.prepareStatement(sql);
+			pStmt.setTimestamp(1, profile.getLastModifiedTime());
+			pStmt.setShort(2, profile.getEmployeeAccountStatus());
+			pStmt.setShort(3, profile.getEmployeeType());
+			pStmt.setInt(4, profile.getApprover1());
+			pStmt.setInt(5, profile.getApprover2());
+			pStmt.setInt(6, profile.getApprover3());
+			pStmt.setInt(7, profile.getEmpId());
+			logger.info(pStmt);
+			updatedRows = pStmt.executeUpdate();
+		} catch(NullPointerException ex){
+			logger.error("database Connection Not Found : " + ex.getMessage());
+		} catch (SQLException ex) {
+			logger.error("SQLException : " + ex.getMessage());
+		} catch(Exception ex){
+			logger.error("Uncaught exception : " + ex.getMessage());
+		} finally {
+			ConnectionHelper.closePreparedStatement(pStmt);
+		}
+		return updatedRows;
 	}
 
 	@Override
@@ -163,9 +191,14 @@ public class EmployeeDAOImplement implements EmployeeDAO {
 			pStmt.setInt(7, employeeInfo.getEmpId());
 			UpdatedRows = pStmt.executeUpdate();
 
+		} catch(NullPointerException ex){
+			logger.error("database Connection Not Found : " + ex.getMessage());
 		} catch (SQLException ex) {
-			System.out.println(ex.getMessage());
-		} finally {
+			logger.error("SQLException : " + ex.getMessage());
+		} catch(Exception ex){
+			logger.error("Uncaught exception : " + ex.getMessage());
+		}
+		finally {
 			ConnectionHelper.closePreparedStatement(pStmt);
 		}
 		return UpdatedRows;
@@ -234,4 +267,25 @@ public class EmployeeDAOImplement implements EmployeeDAO {
 		return null;
 	}
 	
+	public int createEmployeeBalanceRecord(int empId){
+		int updatedRows = -1;
+		String sql = "INSERT INTO " + Tables.EMP_LEAVE 
+				+ "(emp_id,cl,pl,sl,comp_off,met_leave,pet_leave,year) Values (?,6,10,6,0,0,0,?)";
+		PreparedStatement pStmt = null;
+		int year = Calendar.getInstance().get(Calendar.YEAR);
+		logger.info("current year is : " + year);
+		try{
+			pStmt = con.prepareStatement(sql);
+			pStmt.setInt(1, empId);
+			pStmt.setInt(2, year);
+			updatedRows = pStmt.executeUpdate();
+		} catch (NullPointerException ex) {
+			logger.info("Connection Not Found");
+		} catch (SQLException ex) {
+			logger.error("SQLException " + ex.getMessage());
+		} finally {
+			ConnectionHelper.closePreparedStatement(pStmt);
+		}
+		return updatedRows;
+	}
 }

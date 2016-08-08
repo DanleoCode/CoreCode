@@ -4,7 +4,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
 public class LeaveBalance {
-	private short empId;
+	private int empId;
 	private short casualLeave;
 	private short sickLeave;
 	private short privilegeLeave;
@@ -16,7 +16,7 @@ public class LeaveBalance {
 		
 	}
 
-	public LeaveBalance(short empId, short casualLeave, short sickLeave,
+	public LeaveBalance(int empId, short casualLeave, short sickLeave,
 			short privilegeLeave, short compOff, short metLeave, short petLeave,int financialyear) {
 		super();
 		this.empId = empId;
@@ -29,11 +29,11 @@ public class LeaveBalance {
 		this.financialyear = financialyear;
 	}
 
-	public short getEmpId() {
+	public int getEmpId() {
 		return empId;
 	}
 
-	public void setEmpId(short empId) {
+	public void setEmpId(int empId) {
 		this.empId = empId;
 	}
 
