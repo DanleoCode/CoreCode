@@ -86,4 +86,14 @@ public class EmployeeResource {
 		logger.info("hello");
 		return EmployeeDeligate.getProfiles();
 	}
+	
+	@PUT
+	@Produces("application/json")
+	@Consumes("application/json")
+	@Path("/update")
+	
+	public Employee updatePassword(Employee employee){
+		logger.info(employee);
+		return employee;
+	}
 }

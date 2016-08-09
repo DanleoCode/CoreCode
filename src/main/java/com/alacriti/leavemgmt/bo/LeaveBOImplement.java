@@ -72,9 +72,10 @@ public class LeaveBOImplement {
 		LeaveDAOImplement leaveDAOImplement = new LeaveDAOImplement(con);
 		list = leaveDAOImplement.getPendingLeaveApproval(employeeId, leaveStatusCode, approverLevel);
 		Iterator<Employee> iterator = list.iterator();
-		EmployeeBOImplement employeeBOImplement = new EmployeeBOImplement();
+		
 		logger.info("got the list of " + list.size());
 		while(iterator.hasNext()){
+			EmployeeBOImplement employeeBOImplement = new EmployeeBOImplement();
 			Employee employee = iterator.next();
 			int empId = employee.getEmployeeProfile().getEmpId();
 			EmployeeInfo employeeInfo = employeeBOImplement.getEmployeeInfo(empId);
@@ -86,6 +87,25 @@ public class LeaveBOImplement {
 		return list;
 	}
 	
+	public List<Employee> getAllLeaves(){
+		List<Employee> list = new ArrayList<Employee>();
+		LeaveDAOImplement leaveDAOImplement = new LeaveDAOImplement(con);
+		list = leaveDAOImplement.getAllLeavesHistory();
+		Iterator<Employee> iterator = list.iterator();
+		
+		logger.info("got the list of " + list.size());
+		while(iterator.hasNext()){
+			EmployeeBOImplement employeeBOImplement = new EmployeeBOImplement();
+			Employee employee = iterator.next();
+			int empId = employee.getEmployeeProfile().getEmpId();
+			EmployeeInfo employeeInfo = employeeBOImplement.getEmployeeInfo(empId);
+			Leave leave = leaveDAOImplement.getLeaveById(employee.getLeaveHistory().getLeaveId());
+			employee.setEmployeeInfo(employeeInfo);
+			employee.setLeave(leave);
+		}
+		ConnectionHelper.finalizeConnection(con);
+		return list;
+	}
 	public List<EmployeeLeaveHistory> getEmployeeLeaveHistory(int id){
 		List<EmployeeLeaveHistory> list = new ArrayList<EmployeeLeaveHistory>();
 		LeaveDAOImplement leaveDAOImplement  =new LeaveDAOImplement(con);
@@ -124,6 +144,33 @@ public class LeaveBOImplement {
 	public LeaveHistory getLeaveHistoryById(long leaveId){
 		LeaveDAOImplement leaveDAOImplement = new LeaveDAOImplement(con);
 		return leaveDAOImplement.getLeaveHistoryById(leaveId);
+	}
+	
+	public boolean AvailLeaveRequest(LeaveBalance leaveBalance, LeaveHistory leaveHistory){
+		boolean flag = false;
 		
+		LeaveDAOImplement leaveDAOImplement = new LeaveDAOImplement(con);
+		if(leaveDAOImplement.updateLeaveStatus(leaveHistory) == 1){
+			short leaveStatusCode = leaveHistory.getLeaveStatusCode();
+			if(leaveStatusCode == 998){
+				if(leaveDAOImplement.updateLeaveBalance(leaveBalance) == 1){
+					logger.info("Updation successFul Commiting connection");
+					flag = true;
+					ConnectionHelper.commitConnection(con);
+				} else{
+					logger.info("Something wrong rolling connection back");
+					ConnectionHelper.rollbackConnection(con);
+				}
+				
+			} else if(leaveStatusCode == 999){
+				ConnectionHelper.commitConnection(con);
+				flag = true;
+			}
+		} else{
+			logger.info("Unable to update leave Status");
+		}
+		ConnectionHelper.finalizeConnection(con);
+		
+		return flag;
 	}
 }

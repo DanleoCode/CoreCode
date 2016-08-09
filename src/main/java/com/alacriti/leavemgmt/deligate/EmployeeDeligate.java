@@ -70,4 +70,14 @@ public class EmployeeDeligate {
 		}
 		return employee;
 	}
+	
+	public EmployeeProfile updatePassword(EmployeeProfile profile){
+		EmployeeBOImplement boImplement = new EmployeeBOImplement();
+		int empId = profile.getEmpId();
+		String atr = "passwd";
+		String value = profile.getPassword();
+		if(boImplement.updateEmployeeProfileAttribute(empId, atr, value) == 1)
+			return profile;
+		return null;
+	}
 }

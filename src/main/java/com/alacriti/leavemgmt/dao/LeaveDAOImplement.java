@@ -144,6 +144,29 @@ public class LeaveDAOImplement {
 		return list;
 	}
 
+	public List<Employee> getAllLeavesHistory() {
+		String sql = "select * from " + Tables.EMPLOYEE_LEAVE_INSTANCE;
+		PreparedStatement pStmt = null;
+		ResultSet approver1List = null;
+		List<Employee> list = null;
+		try {
+			pStmt = con.prepareStatement(sql);
+			logger.info(pStmt);
+			approver1List = pStmt.executeQuery();
+			list = LeaveBoUtility.getLeaveApprovalList(approver1List);
+			logger.info("got executed");
+		} catch (NullPointerException ex) {
+			logger.info("Connection not found.");
+			logger.error("Connection not found");
+		} catch (SQLException ex) {
+			logger.info("SQLException : " + ex.getMessage());
+			logger.error("Connection not found");
+		} finally {
+			ConnectionHelper.closePreparedStatement(pStmt);
+			;
+		}
+		return list;
+	}
 	public List<EmployeeLeaveHistory> getAllLeaves(int empId) {
 		String sql = "SELECT * FROM " + Tables.EMPLOYEE_LEAVE_INSTANCE + " a, "
 				+ Tables.LEAVE_INSTANCE

@@ -100,4 +100,10 @@ public class EmployeeBOImplement {
 		return updatedRows;
 	}
 	
+	public int updateEmployeeProfileAttribute(int empId, String atr, String value){
+		int updatedRows = -1;
+		EmployeeDAOImplement employeeDAOImplement = new EmployeeDAOImplement(con);
+		updatedRows = employeeDAOImplement.updateEmployeeProfileAttribute(empId, atr, value);
+		return updatedRows;
+	}
 }

@@ -5,6 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.List;
 
@@ -283,6 +284,33 @@ public class EmployeeDAOImplement implements EmployeeDAO {
 			logger.info("Connection Not Found");
 		} catch (SQLException ex) {
 			logger.error("SQLException " + ex.getMessage());
+		} catch(Exception ex){
+			logger.error("Uncaught Exception : " +ex.getMessage() );
+		} finally {
+			ConnectionHelper.closePreparedStatement(pStmt);
+		}
+		return updatedRows;
+	}
+	
+	public int updateEmployeeProfileAttribute(int empId, String atr, String value){
+		int updatedRows = -1;
+		String sql = "UPDATE " + Tables.EMPLOYEE_PROFILE +
+				"SET " + atr + " = ?, last_modified=? where emp_Id = ?";
+		PreparedStatement pStmt = null;
+		Timestamp date = new Timestamp(new java.util.Date().getTime());
+		try{
+			pStmt = con.prepareStatement(sql);
+			pStmt.setString(1, value);
+			pStmt.setTimestamp(2, date);
+			pStmt.setInt(3, empId);
+			
+			updatedRows = pStmt.executeUpdate();
+		} catch (NullPointerException ex) {
+			logger.info("Connection Not Found");
+		} catch (SQLException ex) {
+			logger.error("SQLException " + ex.getMessage());
+		} catch(Exception ex){
+			logger.error("Uncaught Exception : " +ex.getMessage() );
 		} finally {
 			ConnectionHelper.closePreparedStatement(pStmt);
 		}

@@ -80,5 +80,29 @@ public class LeaveResource {
 		return deligate.getLeaveBalance(employeeId);
 	}
 	
+	@GET
+	@Produces("application/json")
+	@Path("approved")
 	
+	public List<Employee> getApprovedLeaves(@PathParam("employeeId") int empId){
+		logger.info("in getApprovedLeaves Resource");
+		LeaveDeligate deligate = new LeaveDeligate();
+		return deligate.getApprovedLeaves(empId);
+	}
+	
+	@PUT
+	@Produces("application/json")
+	@Path("avail")
+	public LeaveHistory availLeaveRequest(@PathParam("employeeId") int empId, Employee employee){
+		LeaveDeligate leaveDeligate = new LeaveDeligate();
+		return leaveDeligate.availLeavRequest(employee);
+	}
+	
+	@GET
+	@Produces("application/json")
+	@Path("all")
+	public List<Employee> getAllLeavesHistory(@PathParam("employeeId") int empId){
+		LeaveDeligate leaveDeligate =  new LeaveDeligate();
+		return leaveDeligate.getAllLeavesHistory();
+	}
 }

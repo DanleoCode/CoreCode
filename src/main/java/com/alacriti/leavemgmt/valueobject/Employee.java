@@ -6,19 +6,21 @@ public class Employee {
 	private LeaveBalance leaveBalance;
 	private Leave leave;
 	private LeaveHistory leaveHistory;
+	private LoginCredential loginCredential;
 	
 	public Employee(){
 		
 	}
 
 	public Employee(EmployeeInfo employeeInfo, EmployeeProfile employeeProfile,
-			LeaveBalance leaveBalance, Leave leave, LeaveHistory leaveHistory) {
+			LeaveBalance leaveBalance, Leave leave, LeaveHistory leaveHistory, LoginCredential credential) {
 		super();
 		this.employeeInfo = employeeInfo;
 		this.employeeProfile = employeeProfile;
 		this.leaveBalance = leaveBalance;
 		this.leave = leave;
 		this.leaveHistory = leaveHistory;
+		this.setLoginCredential(credential);
 	}
 
 	public EmployeeInfo getEmployeeInfo() {
@@ -59,6 +61,14 @@ public class Employee {
 
 	public void setLeaveHistory(LeaveHistory leaveHistory) {
 		this.leaveHistory = leaveHistory;
+	}
+
+	public LoginCredential getLoginCredential() {
+		return loginCredential;
+	}
+
+	public void setLoginCredential(LoginCredential loginCredential) {
+		this.loginCredential = loginCredential;
 	}
 	
 	
