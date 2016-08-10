@@ -36,18 +36,18 @@ public class AuthDeligate {
 			session.setEmpId(empId);
 
 			logger.info("emp id in auth deligate  " + list.get(0).getEmpId());
-//			if (list.get(0).getEmpId() > 0) {
-//				logger.info("valid user");
-//				SessionBOImplement sessionBOImplement = new SessionBOImplement();
-//				if (getSession(empId).getEmpId() == empId) {
-//					logger.info("empId exist");
-//					sessionBOImplement.updateSessionBO(session);
-//				} else {
-//					logger.info("empId does not exist");
-//					sessionBOImplement.createUserSession(session,
-//							list.get(0));
-//				}
-//			}
+			if (list.get(0).getEmpId() > 0) {
+				logger.info("valid user");
+				SessionBOImplement sessionBOImplement = new SessionBOImplement();
+				if (getSession(empId).getEmpId() == empId) {
+					logger.info("empId exist");
+					sessionBOImplement.updateSessionBO(session);
+				} else {
+					logger.info("empId does not exist");
+					sessionBOImplement.createUserSession(session,
+							list.get(0));
+				}
+			}
 		} else{
 			logger.info("failed");
 		}

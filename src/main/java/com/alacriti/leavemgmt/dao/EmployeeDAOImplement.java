@@ -49,8 +49,12 @@ public class EmployeeDAOImplement implements EmployeeDAO {
 			addEmployeeInfoResult.next();
 			generatedEmpId = addEmployeeInfoResult.getInt(1);
 			addEmployeeInfoResult.close();
+		} catch(NullPointerException ex){
+			logger.error("Connection Not Found");
 		} catch (SQLException ex) {
 			logger.error(ex.getMessage());
+		} catch(Exception ex){
+			logger.error("Uncaught Exception : " + ex.getMessage());
 		} finally {
 			ConnectionHelper.closePreparedStatement(pStmt);
 		}
@@ -84,9 +88,11 @@ public class EmployeeDAOImplement implements EmployeeDAO {
 			UpdatedRows = pStmt.executeUpdate();
 
 		} catch(NullPointerException ex){
-			logger.error("Connection Not Found" + ex.getMessage());
+			logger.error("Connection Not Found");
 		} catch (SQLException ex) {
 			logger.error(ex.getMessage());
+		} catch(Exception ex){
+			logger.error("Uncaught Exception : " + ex.getMessage());
 		} finally {
 			ConnectionHelper.closePreparedStatement(pStmt);
 		}
@@ -215,6 +221,7 @@ public class EmployeeDAOImplement implements EmployeeDAO {
 			pStmt.setString(2, passwd);
 			pStmt.setShort(3, (short) 901);
 			ResultSet empProfile = pStmt.executeQuery();
+			logger.info(pStmt);
 			if (empProfile.next()){
 				return empProfile.getInt("emp_id");
 			}
@@ -262,6 +269,8 @@ public class EmployeeDAOImplement implements EmployeeDAO {
 			logger.info("Connection Not Found");
 		} catch (SQLException ex) {
 			logger.error("SQLException " + ex.getMessage());
+		} catch(Exception ex){
+			logger.error("Uncaught Exception : " +ex.getMessage() );
 		} finally {
 			ConnectionHelper.closePreparedStatement(pStmt);
 		}
@@ -295,7 +304,7 @@ public class EmployeeDAOImplement implements EmployeeDAO {
 	public int updateEmployeeProfileAttribute(int empId, String atr, String value){
 		int updatedRows = -1;
 		String sql = "UPDATE " + Tables.EMPLOYEE_PROFILE +
-				"SET " + atr + " = ?, last_modified=? where emp_Id = ?";
+				" SET " + atr + " = ?, last_modified=? where emp_Id = ?";
 		PreparedStatement pStmt = null;
 		Timestamp date = new Timestamp(new java.util.Date().getTime());
 		try{
@@ -303,8 +312,9 @@ public class EmployeeDAOImplement implements EmployeeDAO {
 			pStmt.setString(1, value);
 			pStmt.setTimestamp(2, date);
 			pStmt.setInt(3, empId);
-			
+			logger.info(pStmt);
 			updatedRows = pStmt.executeUpdate();
+			
 		} catch (NullPointerException ex) {
 			logger.info("Connection Not Found");
 		} catch (SQLException ex) {

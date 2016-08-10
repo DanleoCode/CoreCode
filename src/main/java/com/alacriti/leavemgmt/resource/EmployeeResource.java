@@ -92,8 +92,11 @@ public class EmployeeResource {
 	@Consumes("application/json")
 	@Path("/update")
 	
-	public Employee updatePassword(Employee employee){
-		logger.info(employee);
-		return employee;
+	public EmployeeProfile updatePassword(Employee employee){
+		logger.info("hello resource");
+		EmployeeDeligate employeeDeligate = new EmployeeDeligate();
+		return employeeDeligate.updatePassword(employee);
+		//return null;
+		
 	}
 }

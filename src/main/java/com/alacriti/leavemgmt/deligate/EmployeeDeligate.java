@@ -57,7 +57,8 @@ public class EmployeeDeligate {
 		}
 		int year = Calendar.getInstance().get(Calendar.YEAR);
 		LeaveBOImplement leaveBOImplement = new LeaveBOImplement();
-		if (leaveBOImplement.getLeaveBalance(employee.getEmployeeProfile().getEmpId(), year) == null) {
+		if (leaveBOImplement.getLeaveBalance(employee.getEmployeeProfile()
+				.getEmpId(), year) == null) {
 			if (employee.getLeaveBalance() != null) {
 				leaveBOImplement = new LeaveBOImplement();
 				employee.getLeaveBalance().setFinancialyear(year);
@@ -70,14 +71,22 @@ public class EmployeeDeligate {
 		}
 		return employee;
 	}
-	
-	public EmployeeProfile updatePassword(EmployeeProfile profile){
-		EmployeeBOImplement boImplement = new EmployeeBOImplement();
-		int empId = profile.getEmpId();
-		String atr = "passwd";
-		String value = profile.getPassword();
-		if(boImplement.updateEmployeeProfileAttribute(empId, atr, value) == 1)
-			return profile;
-		return null;
+
+	public EmployeeProfile updatePassword(Employee employee) {
+		if (employee != null) {
+			EmployeeBOImplement boImplement = new EmployeeBOImplement();
+			int result = boImplement.updatePassword(employee);
+			if (result == 1) {
+				employee.getEmployeeProfile().setLoginId("updated successfull");
+				logger.info("updated successfull");
+			} else if (result == 0) {
+				employee.getEmployeeProfile().setLoginId("Not updated");
+				logger.info("not updated");
+			} else {
+				employee.getEmployeeProfile().setLoginId("Wrong credential");
+				logger.info("password not matched");
+			}
+		}
+		return employee.getEmployeeProfile();
 	}
 }

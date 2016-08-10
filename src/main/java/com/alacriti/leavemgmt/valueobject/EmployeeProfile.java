@@ -3,7 +3,6 @@ package com.alacriti.leavemgmt.valueobject;
 import java.sql.Timestamp;
 
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 
 @XmlRootElement
 public class EmployeeProfile extends EmployeeInfo{
@@ -51,11 +50,11 @@ public class EmployeeProfile extends EmployeeInfo{
 	public void setLoginId(String loginId) {
 		this.loginId = loginId;
 	}
-	@XmlTransient
+	
 	public String getPassword() {
 		return password;
 	}
-	@XmlTransient
+	
 	public void setPassword(String password) {
 		this.password = password;
 	}

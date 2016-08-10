@@ -35,14 +35,14 @@ public class LeaveDeligate {
 	public LeaveHistory createNewLeaveInstance(EmployeeProfile employeeProfile,
 			long generatedLeaveId, Leave leave) {
 
-		LeaveHistory leaveInstance = new LeaveHistory();
-		leaveInstance.setEmployeeProfile(employeeProfile);
-		leaveInstance.setLeaveId(generatedLeaveId);
-		leaveInstance.setLeaveStatusCode(LeaveStatus.inProgress);
+		LeaveHistory leaveHistory = new LeaveHistory();
+		leaveHistory.setEmployeeProfile(employeeProfile);
+		leaveHistory.setLeaveId(generatedLeaveId);
+		leaveHistory.setLeaveStatusCode(LeaveStatus.inProgress);
 		Timestamp creationTime = new Timestamp(new java.util.Date().getTime());
-		leaveInstance.setCreationTime(creationTime);
-		leaveInstance.setLastModified(creationTime);
-		return leaveInstance;
+		leaveHistory.setCreationTime(creationTime);
+		leaveHistory.setLastModified(creationTime);
+		return leaveHistory;
 	}
 
 	public LeaveHistory updateLeaveStatus(int employeeId,

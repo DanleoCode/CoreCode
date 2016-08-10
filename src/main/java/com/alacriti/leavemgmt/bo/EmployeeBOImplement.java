@@ -7,6 +7,7 @@ import java.util.List;
 import org.apache.log4j.Logger;
 
 import com.alacriti.leavemgmt.dao.EmployeeDAOImplement;
+import com.alacriti.leavemgmt.valueobject.Employee;
 import com.alacriti.leavemgmt.valueobject.EmployeeInfo;
 import com.alacriti.leavemgmt.valueobject.EmployeeProfile;
 
@@ -74,7 +75,6 @@ public class EmployeeBOImplement {
 			logger.info("will not create session");
 		}
 		ConnectionHelper.finalizeConnection(con);
-		//logger.info(list.get(0));
 		return list;
 	}
 	
@@ -105,5 +105,25 @@ public class EmployeeBOImplement {
 		EmployeeDAOImplement employeeDAOImplement = new EmployeeDAOImplement(con);
 		updatedRows = employeeDAOImplement.updateEmployeeProfileAttribute(empId, atr, value);
 		return updatedRows;
+	}
+	
+	public int updatePassword(Employee employee){
+		int updatedrows = -1;
+		String loginId = employee.getLoginCredential().getUser();
+		String password = employee.getLoginCredential().getPass();
+		String newPassword = employee.getEmployeeProfile().getLoginId();
+		int empId = employee.getEmployeeProfile().getEmpId();
+		
+		EmployeeDAOImplement employeeDAOImplement = new EmployeeDAOImplement(con);
+		if(employeeDAOImplement.authLogin(loginId, password) >= 1){
+			if(employeeDAOImplement.updateEmployeeProfileAttribute(empId, "passwd", newPassword) == 1){
+				ConnectionHelper.commitConnection(con);
+				updatedrows = 1;
+			}
+			else
+				updatedrows = 0;
+		}
+		ConnectionHelper.finalizeConnection(con);
+		return updatedrows;
 	}
 }

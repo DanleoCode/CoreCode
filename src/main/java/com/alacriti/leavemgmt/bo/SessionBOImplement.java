@@ -39,6 +39,8 @@ public class SessionBOImplement {
 		int updatedrows  = -1;
 		SessionDAOImplement sessionDAOImplement = new SessionDAOImplement(this.con);
 		updatedrows = sessionDAOImplement.updateSession(session);
+		ConnectionHelper.commitConnection(con);
+		ConnectionHelper.finalizeConnection(con);
 		return updatedrows;
 	}
 }

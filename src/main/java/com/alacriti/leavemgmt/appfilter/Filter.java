@@ -46,18 +46,16 @@ public class Filter implements ContainerRequestFilter {
 			try {
 				
 				if ((int) httpSession.getAttribute("empId") > 0) {
-					logger.info("++++++++++++++++++++++++++++++hi+++++++++++++++++++++");
-					logger.info("Typw of Employee is : " + (int)httpSession.getAttribute("empId"));
 					String sessionId = httpSession.getId();
 					int empId = (int) httpSession.getAttribute("empId");
 					logger.info("got the empId: " + empId);
-//					UserSession userSession = AuthDeligate.getSession(empId);
-//					if (userSession.getEmpSessionId().equals(sessionId)) {
-//						logger.info("Session Not Found");
-//					} else {
-//						containerRequestContext.abortWith(Response.status(
-//						Status.UNAUTHORIZED).build());
-//					}
+					UserSession userSession = AuthDeligate.getSession(empId);
+					if (userSession.getEmpSessionId().equals(sessionId)) {
+						logger.info("Session Found");
+					} else {
+						containerRequestContext.abortWith(Response.status(
+						Status.UNAUTHORIZED).build());
+					}
 				}
 			} catch (NullPointerException ex) {
 				logger.error("No Session null session " + ex.getMessage());
