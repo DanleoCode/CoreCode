@@ -1,10 +1,14 @@
 package com.alacriti.leavemgmt.resource;
 
+import java.io.IOException;
+import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -55,5 +59,19 @@ public class Auth {
 	@Path("/logout")
 	public String logOut(){
 		return "LOGGED OUT";
+	}
+	
+	@POST
+	@Consumes("application/x-www-form-urlencoded")
+	@Produces("text/plain")
+	@Path("/oauth")
+	public String oAuth(@FormParam("token_id") String token){
+		logger.info(token);
+		try {
+			AuthDeligate.verifyToken(token);
+		} catch (GeneralSecurityException | IOException e) {
+			e.printStackTrace();
+		}
+		return token;
 	}
 }

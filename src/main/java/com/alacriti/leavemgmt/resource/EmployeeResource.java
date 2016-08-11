@@ -3,12 +3,14 @@ package com.alacriti.leavemgmt.resource;
 import java.util.List;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 
 import org.apache.log4j.Logger;
 
@@ -71,32 +73,34 @@ public class EmployeeResource {
 	@Consumes("application/json")
 	@Path(URLConstant.PROFILE)
 	/*Resource Path : "employee/profile/{employeeId}" */
+	
 	public Employee updateEmployeeProfile(@PathParam("employeeId") int empId, Employee employee){
 		logger.info("Hello update");
 		return EmployeeDeligate.updateEmployee(empId, employee);
-		//return employee;
 	}
 	
 	@GET
 	@Produces("application/json")
-//	@Path(URLConstant.PROFILES)
-	@Path("/profiles")
-	/*Resource Path : /employee/profiles */
-	public List<EmployeeProfile> getProfiles(){
-		logger.info("hello");
-		return EmployeeDeligate.getProfiles();
+	@Path(URLConstant.PROFILES)
+	/*Resource Path : "employee/profiles" */
+	
+	public List<EmployeeProfile> getProfiles(@DefaultValue("0") @QueryParam("offset") int offset,
+											@DefaultValue("10")@QueryParam("limit") int limit){
+		logger.info("start " + offset);
+		logger.info("limit " + limit);
+		return EmployeeDeligate.getProfiles(offset, limit);
 	}
 	
 	@PUT
 	@Produces("application/json")
 	@Consumes("application/json")
-	@Path("/update")
+	@Path(URLConstant.UPDATE)
+	/*Resource Path : "employee/update" */
 	
 	public EmployeeProfile updatePassword(Employee employee){
 		logger.info("hello resource");
 		EmployeeDeligate employeeDeligate = new EmployeeDeligate();
 		return employeeDeligate.updatePassword(employee);
-		//return null;
 		
 	}
 }

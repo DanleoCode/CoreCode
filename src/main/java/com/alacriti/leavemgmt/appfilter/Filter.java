@@ -39,7 +39,9 @@ public class Filter implements ContainerRequestFilter {
 			httpSession.invalidate();
 		} else if (requestForRescource.equals("/auth/login")) {
 			logger.info("login request");
-		} else if (requestForRescource.equals("/employee")
+		} else if (requestForRescource.equals("/auth/oauth")) {
+			logger.info("oauth request");
+		}else if (requestForRescource.equals("/employee")
 				&& containerRequestContext.getMethod().equals("POST")) {
 			logger.info("add new employee");
 		} else {

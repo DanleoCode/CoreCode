@@ -37,10 +37,10 @@ public class EmployeeDeligate {
 		return employeeProfile;
 	}
 
-	public static List<EmployeeProfile> getProfiles() {
+	public static List<EmployeeProfile> getProfiles(int offset, int limit) {
 		logger.info("in EmployeeDeligate");
 		EmployeeBOImplement employeeBOImplement = new EmployeeBOImplement();
-		return employeeBOImplement.getProfiles();
+		return employeeBOImplement.getProfiles(offset, limit);
 	}
 
 	public static Employee updateEmployee(int empId, Employee employee) {

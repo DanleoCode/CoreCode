@@ -235,8 +235,8 @@ public class EmployeeDAOImplement implements EmployeeDAO {
 		return -1;
 	}
 
-	public List<EmployeeProfile> employeeDetail(int value, String column) {				//returns a full profile a Employee id = empId
-		String sql = "select * from " + Tables.EMPLOYEE_INFO + " a,"
+	public List<EmployeeProfile> employeeDetail(int value, String column) {				//returns a full profile wherer a column 'column' has a value
+		String sql = "select * from " + Tables.EMPLOYEE_INFO + " a,"					//'value'
 				+ Tables.EMPLOYEE_PROFILE
 				+ " b where a.emp_id=b.emp_id and a." + column + "= ?";
 		PreparedStatement pStmt = null;
@@ -255,14 +255,17 @@ public class EmployeeDAOImplement implements EmployeeDAO {
 		return null;
 	}
 	
-	public List<EmployeeProfile> getProfiles() {
+	public List<EmployeeProfile> getProfiles(int offset, int limit) {
 		logger.info("in daoimplement");
 		String sql = "select * from " + Tables.EMPLOYEE_INFO + " a,"
 				+ Tables.EMPLOYEE_PROFILE
-				+ " b where a.emp_id=b.emp_id";
+				+ " b where a.emp_id=b.emp_id LIMIT ?, ?";
 		PreparedStatement pStmt = null;
 		try {
 			pStmt = con.prepareStatement(sql);
+			pStmt.setInt(1, offset);
+			pStmt.setInt(2, limit);
+			logger.info(pStmt);
 			ResultSet empProfile = pStmt.executeQuery();
 			return EmployeeBOUtility.getEmployeeDetail(empProfile);
 		} catch (NullPointerException ex) {

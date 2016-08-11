@@ -78,10 +78,10 @@ public class EmployeeBOImplement {
 		return list;
 	}
 	
-	public List<EmployeeProfile> getProfiles(){
+	public List<EmployeeProfile> getProfiles(int offset, int limit){
 		logger.info("in BOIMPLEMENT");
 		EmployeeDAOImplement employeeDAOImplement  = new EmployeeDAOImplement(con);
-		return employeeDAOImplement.getProfiles();
+		return employeeDAOImplement.getProfiles(offset, limit);
 	}
 	
 	public int createEmployeeBalanceRecord(EmployeeProfile profile){
