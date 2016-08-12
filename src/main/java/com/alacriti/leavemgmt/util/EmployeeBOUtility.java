@@ -15,9 +15,10 @@ public class EmployeeBOUtility  {
 	public static Logger logger = Logger.getLogger(EmployeeBOUtility.class);
 	
 	public static EmployeeInfo getSelectEmployeeInfoData(ResultSet employeeInfoRecord) {
-		EmployeeInfo employeeInfo = new EmployeeInfo();
+		EmployeeInfo employeeInfo = null;
 		try {
 			if (employeeInfoRecord.next()) {
+				employeeInfo = new EmployeeInfo();
 				employeeInfo.setEmpId(employeeInfoRecord.getInt("emp_id"));
 				employeeInfo.setEmpCode(employeeInfoRecord.getString("emp_code"));
 				employeeInfo.setFirstName(employeeInfoRecord.getString("first_name"));
@@ -39,9 +40,10 @@ public class EmployeeBOUtility  {
 	}
 
 	public static EmployeeProfile getSelectEmployeeProfileData(ResultSet employeeProfileRecord) {
-		EmployeeProfile employeeProfile = new EmployeeProfile();
+		EmployeeProfile employeeProfile = null;
 		try{
 			if(employeeProfileRecord.next()){
+				employeeProfile = new EmployeeProfile();
 				employeeProfile.setEmpId(employeeProfileRecord.getInt("emp_id"));
 				employeeProfile.setLoginId(employeeProfileRecord.getString("login_id"));
 				employeeProfile.setPassword(employeeProfileRecord.getString("passwd"));

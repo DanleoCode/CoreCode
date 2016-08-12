@@ -21,21 +21,26 @@ public class EmployeeBOImplement {
 	public EmployeeInfo addEmployee(EmployeeProfile employeeProfile) {
 		EmployeeDAOImplement employeeService = new EmployeeDAOImplement(con);
 		int generatedEmpId = 0;
+		logger.info("Calling addEmployeeInfo of emp dao");
 		generatedEmpId = employeeService.addEmployeeInfo(employeeProfile);
+		logger.info("Generated ID is : " + generatedEmpId);
 		employeeProfile.setEmpId(generatedEmpId);
 		if (generatedEmpId > 0) {
 			int updatedRow = employeeService.addEmployeeProfile(employeeProfile);
 			logger.info("number of affacted rows : " + updatedRow);
 			if (updatedRow == 1) {
 				employeeProfile.setEmpId(generatedEmpId);
+				logger.info("committing connection");
 				ConnectionHelper.commitConnection(con);
 			}else{
 				employeeProfile.setEmpId(0);
 				ConnectionHelper.rollbackConnection(con);
+				logger.info("connectrion rolled back");
 			}
 		}
 		
 		ConnectionHelper.finalizeConnection(con);
+		logger.info("employeeBOIMplment finished");
 		return employeeProfile;
 	}
 	

@@ -85,7 +85,7 @@ public class EmployeeResource {
 	/*Resource Path : "employee/profiles" */
 	
 	public List<EmployeeProfile> getProfiles(@DefaultValue("0") @QueryParam("offset") int offset,
-											@DefaultValue("10")@QueryParam("limit") int limit){
+											@DefaultValue("30")@QueryParam("limit") int limit){
 		logger.info("start " + offset);
 		logger.info("limit " + limit);
 		return EmployeeDeligate.getProfiles(offset, limit);

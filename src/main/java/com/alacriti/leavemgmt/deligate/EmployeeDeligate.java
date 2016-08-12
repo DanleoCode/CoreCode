@@ -38,7 +38,6 @@ public class EmployeeDeligate {
 	}
 
 	public static List<EmployeeProfile> getProfiles(int offset, int limit) {
-		logger.info("in EmployeeDeligate");
 		EmployeeBOImplement employeeBOImplement = new EmployeeBOImplement();
 		return employeeBOImplement.getProfiles(offset, limit);
 	}

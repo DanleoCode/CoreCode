@@ -49,13 +49,15 @@ public class EmployeeDAOImplement implements EmployeeDAO {
 			addEmployeeInfoResult.next();
 			generatedEmpId = addEmployeeInfoResult.getInt(1);
 			addEmployeeInfoResult.close();
+			logger.info("closed rs of assemoployeeInfo");
 		} catch(NullPointerException ex){
 			logger.error("Connection Not Found");
 		} catch (SQLException ex) {
-			logger.error(ex.getMessage());
+			logger.error("SQLException1 : " + ex.getMessage());
 		} catch(Exception ex){
 			logger.error("Uncaught Exception : " + ex.getMessage());
 		} finally {
+			logger.info("closing stamt in addEmployeeINFO");
 			ConnectionHelper.closePreparedStatement(pStmt);
 		}
 		return generatedEmpId;
@@ -213,13 +215,13 @@ public class EmployeeDAOImplement implements EmployeeDAO {
 
 	public int authLogin(String loginId, String passwd) {
 		String sql = "SELECT emp_id FROM " + Tables.EMPLOYEE_PROFILE
-				+ " WHERE login_id=? and passwd=? and emp_account_status = ?;";
+				+ " WHERE login_id=? and passwd=?";// and emp_account_status = ?;";
 		PreparedStatement pStmt = null;
 		try {
 			pStmt = con.prepareStatement(sql);
 			pStmt.setString(1, loginId);
 			pStmt.setString(2, passwd);
-			pStmt.setShort(3, (short) 901);
+			//pStmt.setShort(3, (short) 901);
 			ResultSet empProfile = pStmt.executeQuery();
 			logger.info(pStmt);
 			if (empProfile.next()){
@@ -328,5 +330,27 @@ public class EmployeeDAOImplement implements EmployeeDAO {
 			ConnectionHelper.closePreparedStatement(pStmt);
 		}
 		return updatedRows;
+	}
+	
+	public EmployeeInfo getInfoByAttribute(String column, String value){
+		EmployeeInfo employeeInfo = null;
+		String sql = "SELECT * FROM " + Tables.EMPLOYEE_INFO
+				+ " where " + column + " = ?";
+		PreparedStatement pStmt = null;
+		try{
+			pStmt = con.prepareStatement(sql);
+			pStmt.setString(1, value);
+			ResultSet employeeResult = pStmt.executeQuery();
+			employeeInfo = EmployeeBOUtility.getSelectEmployeeInfoData(employeeResult);
+		}  catch (NullPointerException ex) {
+			logger.info("Connection Not Found");
+		} catch (SQLException ex) {
+			logger.error("SQLException " + ex.getMessage());
+		} catch(Exception ex){
+			logger.error("Uncaught Exception : " +ex.getMessage() );
+		} finally {
+			ConnectionHelper.closePreparedStatement(pStmt);
+		}
+		return employeeInfo;
 	}
 }

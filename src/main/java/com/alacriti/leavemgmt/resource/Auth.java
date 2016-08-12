@@ -17,6 +17,7 @@ import javax.ws.rs.core.Context;
 import org.apache.log4j.Logger;
 
 import com.alacriti.leavemgmt.deligate.AuthDeligate;
+import com.alacriti.leavemgmt.valueobject.EmployeeInfo;
 import com.alacriti.leavemgmt.valueobject.EmployeeProfile;
 import com.alacriti.leavemgmt.valueobject.LoginCredential;
 import com.alacriti.leavemgmt.valueobject.UserSession;
@@ -63,15 +64,24 @@ public class Auth {
 	
 	@POST
 	@Consumes("application/x-www-form-urlencoded")
-	@Produces("text/plain")
+//	@Consumes("application/json")
+	@Produces("application/json")
 	@Path("/oauth")
-	public String oAuth(@FormParam("token_id") String token){
-		logger.info(token);
+	
+	public EmployeeInfo oAuth(@FormParam("token_id") String token){
+		
+		HttpSession session = httpServletRequest.getSession();
+		logger.info("hit the auth resource");
+		UserSession userSession = new UserSession();
+		userSession.setEmpSessionId(session.getId());
+		
+		
+		EmployeeInfo employeeInfo = null;
 		try {
-			AuthDeligate.verifyToken(token);
+			employeeInfo = AuthDeligate.verifyToken(token,userSession);
 		} catch (GeneralSecurityException | IOException e) {
 			e.printStackTrace();
 		}
-		return token;
+		return employeeInfo;
 	}
 }

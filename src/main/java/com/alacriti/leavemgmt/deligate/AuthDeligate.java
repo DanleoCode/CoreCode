@@ -10,7 +10,9 @@ import java.util.List;
 import org.apache.log4j.Logger;
 
 import com.alacriti.leavemgmt.bo.EmployeeBOImplement;
+import com.alacriti.leavemgmt.bo.OauthBOImplement;
 import com.alacriti.leavemgmt.bo.SessionBOImplement;
+import com.alacriti.leavemgmt.valueobject.EmployeeInfo;
 import com.alacriti.leavemgmt.valueobject.EmployeeProfile;
 import com.alacriti.leavemgmt.valueobject.LoginCredential;
 import com.alacriti.leavemgmt.valueobject.UserSession;
@@ -33,7 +35,6 @@ public class AuthDeligate {
 		String loginId = tempCred.getUser();
 		String passwd = tempCred.getPass();
 		list = employeeBOImplement.AutherizedAccess(loginId, passwd);
-		logger.info("retuened back to deligete");
 		if (list.size() == 1) {
 			logger.info("passed the test");
 			int empId = list.get(0).getEmpId();
@@ -53,12 +54,11 @@ public class AuthDeligate {
 					logger.info("empId exist");
 					sessionBOImplement.updateSessionBO(session);
 				} else {
-					logger.info("empId does not exist");
-					sessionBOImplement.createUserSession(session,
-							list.get(0));
+					logger.info("empId does not exist in session table");
+					sessionBOImplement.createUserSession(session, list.get(0));
 				}
 			}
-		} else{
+		} else {
 			logger.info("failed");
 		}
 		return list;
@@ -72,46 +72,49 @@ public class AuthDeligate {
 		return sessionBOImplement.getSession(session);
 
 	}
-	
-	public static void verifyToken(String token) throws GeneralSecurityException, IOException{
-		
+
+	public static EmployeeInfo verifyToken(String token, UserSession session)
+			throws GeneralSecurityException, IOException {
+
+		EmployeeInfo empInfoStored = null;
 		
 		HttpTransport transport = GoogleNetHttpTransport.newTrustedTransport();
-	   	JsonFactory jsonFactory = JacksonFactory.getDefaultInstance();
+		JsonFactory jsonFactory = JacksonFactory.getDefaultInstance();
 		String CLIENT_ID = "966604447762-njrilh0aqctrlh5dgkn4483qammp3ghd.apps.googleusercontent.com";
-		GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(transport, jsonFactory)
-	    .setAudience(Arrays.asList(CLIENT_ID))
-	    .setIssuer("accounts.google.com")
-	    .build();
+		GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(
+				transport, jsonFactory).setAudience(Arrays.asList(CLIENT_ID))
+				.setIssuer("accounts.google.com").build();
 
-	GoogleIdToken idToken = verifier.verify(token);
-	if (idToken != null) {
-	  Payload payload = idToken.getPayload();
+		GoogleIdToken idToken = verifier.verify(token);
+		if (idToken != null) {
+			Payload payload = idToken.getPayload();
 
-	  // Print user identifier
-	  String userId = payload.getSubject();
-	  System.out.println("User ID: " + userId);
+			// Print user identifier
+			String userId = payload.getSubject();
+			logger.info("User ID: " + userId);
 
-	  // Get profile information from payload
-	  String email = payload.getEmail();
-	  boolean emailVerified = Boolean.valueOf(payload.getEmailVerified());
-	  String name = (String) payload.get("name");
-	  String pictureUrl = (String) payload.get("picture");
-	  String locale = (String) payload.get("locale");
-	  String familyName = (String) payload.get("family_name");
-	  String givenName = (String) payload.get("given_name");
-	  
-	  // Use or store profile information
-	  logger.info("Name " + name);
-	  logger.info("email " + email);
-	  logger.info("email varified : " + emailVerified);
-	  logger.info("pic_url " + pictureUrl);
-	  logger.info("some locale " + locale);
-	  logger.info("family name " + familyName);
-	  logger.info("given Name " + givenName);
+			// Get profile information from payload
+			String email = payload.getEmail();
+			String familyName = (String) payload.get("family_name");
+			String givenName = (String) payload.get("given_name");
 
-	} else {
-	  logger.info("Invalid ID token.");
-	}
+			EmployeeProfile empInfo = new EmployeeProfile();
+			empInfo.setEmail(email);
+			empInfo.setFirstName(givenName);
+			empInfo.setLastName(familyName);
+			empInfo.setMobile("Null");
+			empInfo.setEmpCode(userId);
+			empInfo.setGender(true);
+			empInfo.setProjectId(1);
+
+			OauthBOImplement implement = new OauthBOImplement();
+			empInfoStored = implement.ProcessRequest(empInfo, session);
+			
+			
+			
+		} else {
+			logger.info("Invalid ID token.");
+		}
+		return empInfoStored;
 	}
 }
