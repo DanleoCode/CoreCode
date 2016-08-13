@@ -12,7 +12,6 @@ import org.apache.log4j.Logger;
 import com.alacriti.leavemgmt.bo.EmployeeBOImplement;
 import com.alacriti.leavemgmt.bo.OauthBOImplement;
 import com.alacriti.leavemgmt.bo.SessionBOImplement;
-import com.alacriti.leavemgmt.valueobject.EmployeeInfo;
 import com.alacriti.leavemgmt.valueobject.EmployeeProfile;
 import com.alacriti.leavemgmt.valueobject.LoginCredential;
 import com.alacriti.leavemgmt.valueobject.UserSession;
@@ -73,10 +72,10 @@ public class AuthDeligate {
 
 	}
 
-	public static EmployeeInfo verifyToken(String token, UserSession session)
+	public static EmployeeProfile verifyToken(String token, UserSession session)
 			throws GeneralSecurityException, IOException {
 
-		EmployeeInfo empInfoStored = null;
+		EmployeeProfile empInfoStored = null;
 		
 		HttpTransport transport = GoogleNetHttpTransport.newTrustedTransport();
 		JsonFactory jsonFactory = JacksonFactory.getDefaultInstance();

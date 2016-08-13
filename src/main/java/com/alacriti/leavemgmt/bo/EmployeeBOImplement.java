@@ -2,6 +2,7 @@ package com.alacriti.leavemgmt.bo;
 
 import java.sql.Connection;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -130,5 +131,21 @@ public class EmployeeBOImplement {
 		}
 		ConnectionHelper.finalizeConnection(con);
 		return updatedrows;
+	}
+	
+	public List<EmployeeProfile> searchProfile(String query){
+		EmployeeDAOImplement employeeDAOImplement = new EmployeeDAOImplement(con);
+		List<EmployeeProfile> profileList = new ArrayList<EmployeeProfile>();
+		List<EmployeeInfo> empInfoList = employeeDAOImplement.searchInfo("first_name", query);
+		empInfoList.addAll(employeeDAOImplement.searchInfo("last_name", query));
+		empInfoList.addAll(employeeDAOImplement.searchInfo("emp_id", query));
+		empInfoList.addAll(employeeDAOImplement.searchInfo("email", query));
+		Iterator<EmployeeInfo> iterator = empInfoList.iterator();
+		while(iterator.hasNext()){
+			EmployeeInfo empInfo = iterator.next();
+			profileList.addAll(employeeDAOImplement.employeeDetail(empInfo.getEmpId(), "emp_Id"));
+		}
+		ConnectionHelper.finalizeConnection(con);
+		return profileList;
 	}
 }

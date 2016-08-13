@@ -113,7 +113,9 @@ public class EmployeeDAOImplement implements EmployeeDAO {
 			pStmt = con.prepareStatement(sql);
 			pStmt.setInt(1, empId);
 			employeeInfoRecord = pStmt.executeQuery();
-			employeeInfo = EmployeeBOUtility.getSelectEmployeeInfoData(employeeInfoRecord);
+			List<EmployeeInfo> list =  EmployeeBOUtility.getSelectEmployeeInfoData(employeeInfoRecord);
+			if(list.size() > 0)
+				employeeInfo = list.get(0);
 		} catch (NullPointerException ex) {
 			logger.error("Connection Not Created : " + ex.getMessage());
 		} catch (SQLException ex) {
@@ -154,10 +156,9 @@ public class EmployeeDAOImplement implements EmployeeDAO {
 		int updatedRows = -1;
 		String sql = "UPDATE "
 				+ Tables.EMPLOYEE_PROFILE
-				+ " set last_modified = ?, emp_account_status = ?, emp_type = ?, approver1_id = ?, approver2_id =?, approver3_id = ?"
+				+ " set last_modified = ?, emp_account_status = ?, "
+				+ "emp_type = ?, approver1_id = ?, approver2_id =?, approver3_id = ?"
 				+ " where emp_id=?";
-		
-		
 		try{
 			pStmt = con.prepareStatement(sql);
 			pStmt.setTimestamp(1, profile.getLastModifiedTime());
@@ -213,6 +214,7 @@ public class EmployeeDAOImplement implements EmployeeDAO {
 		return UpdatedRows;
 	}
 
+	@Override
 	public int authLogin(String loginId, String passwd) {
 		String sql = "SELECT emp_id FROM " + Tables.EMPLOYEE_PROFILE
 				+ " WHERE login_id=? and passwd=?";// and emp_account_status = ?;";
@@ -236,9 +238,10 @@ public class EmployeeDAOImplement implements EmployeeDAO {
 		}
 		return -1;
 	}
-
-	public List<EmployeeProfile> employeeDetail(int value, String column) {				//returns a full profile wherer a column 'column' has a value
-		String sql = "select * from " + Tables.EMPLOYEE_INFO + " a,"					//'value'
+	
+	@Override
+	public List<EmployeeProfile> employeeDetail(int value, String column) {
+		String sql = "select * from " + Tables.EMPLOYEE_INFO + " a,"					
 				+ Tables.EMPLOYEE_PROFILE
 				+ " b where a.emp_id=b.emp_id and a." + column + "= ?";
 		PreparedStatement pStmt = null;
@@ -257,6 +260,7 @@ public class EmployeeDAOImplement implements EmployeeDAO {
 		return null;
 	}
 	
+	@Override
 	public List<EmployeeProfile> getProfiles(int offset, int limit) {
 		logger.info("in daoimplement");
 		String sql = "select * from " + Tables.EMPLOYEE_INFO + " a,"
@@ -282,6 +286,7 @@ public class EmployeeDAOImplement implements EmployeeDAO {
 		return null;
 	}
 	
+	@Override
 	public int createEmployeeBalanceRecord(int empId){
 		int updatedRows = -1;
 		String sql = "INSERT INTO " + Tables.EMP_LEAVE 
@@ -306,6 +311,7 @@ public class EmployeeDAOImplement implements EmployeeDAO {
 		return updatedRows;
 	}
 	
+	@Override
 	public int updateEmployeeProfileAttribute(int empId, String atr, String value){
 		int updatedRows = -1;
 		String sql = "UPDATE " + Tables.EMPLOYEE_PROFILE +
@@ -332,8 +338,9 @@ public class EmployeeDAOImplement implements EmployeeDAO {
 		return updatedRows;
 	}
 	
-	public EmployeeInfo getInfoByAttribute(String column, String value){
-		EmployeeInfo employeeInfo = null;
+	@Override
+	public List<EmployeeInfo> getInfoByAttribute(String column, String value){
+		List<EmployeeInfo> list = null;
 		String sql = "SELECT * FROM " + Tables.EMPLOYEE_INFO
 				+ " where " + column + " = ?";
 		PreparedStatement pStmt = null;
@@ -341,7 +348,7 @@ public class EmployeeDAOImplement implements EmployeeDAO {
 			pStmt = con.prepareStatement(sql);
 			pStmt.setString(1, value);
 			ResultSet employeeResult = pStmt.executeQuery();
-			employeeInfo = EmployeeBOUtility.getSelectEmployeeInfoData(employeeResult);
+			list = EmployeeBOUtility.getSelectEmployeeInfoData(employeeResult);
 		}  catch (NullPointerException ex) {
 			logger.info("Connection Not Found");
 		} catch (SQLException ex) {
@@ -351,6 +358,29 @@ public class EmployeeDAOImplement implements EmployeeDAO {
 		} finally {
 			ConnectionHelper.closePreparedStatement(pStmt);
 		}
-		return employeeInfo;
+		return list;
+	}
+	
+	public List<EmployeeInfo> searchInfo(String column, String value){
+		List<EmployeeInfo> list = null;
+		String sql = "SELECT * FROM " + Tables.EMPLOYEE_INFO
+				+ " where " + column + " LIKE '%" + value + "%'";
+		PreparedStatement pStmt = null;
+		try{
+			pStmt = con.prepareStatement(sql);
+			logger.info(pStmt);
+			ResultSet employeeResult = pStmt.executeQuery();
+			
+			list = EmployeeBOUtility.getSelectEmployeeInfoData(employeeResult);
+		}  catch (NullPointerException ex) {
+			logger.info("Connection Not Found");
+		} catch (SQLException ex) {
+			logger.error("SQLException " + ex.getMessage());
+		} catch(Exception ex){
+			logger.error("Uncaught Exception : " +ex.getMessage() );
+		} finally {
+			ConnectionHelper.closePreparedStatement(pStmt);
+		}
+		return list;
 	}
 }

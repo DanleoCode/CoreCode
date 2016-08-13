@@ -88,4 +88,9 @@ public class EmployeeDeligate {
 		}
 		return employee.getEmployeeProfile();
 	}
+	
+	public static List<EmployeeProfile> searchProfile(String query){
+		EmployeeBOImplement employeeBOImplement = new EmployeeBOImplement();
+		return employeeBOImplement.searchProfile(query);
+	}
 }

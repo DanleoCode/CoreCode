@@ -31,7 +31,8 @@ public class SessionDAOImplement {
 		PreparedStatement pStmt = null;
 		String sql = "INSERT INTO "
 				+ Tables.SESSION_TABLE
-				+ "(emp_id,emp_type,emp_login_ip,emp_privilege_type,session_creation_time,emp_session_id,last_modified_time )"
+				+ "(emp_id,emp_type,emp_login_ip,emp_privilege_type"
+				+ ",session_creation_time,emp_session_id,last_modified_time )"
 				+ " VALUES (?,?,?,?,?,?,?)";
 		try {
 			logger.info("in session dao");

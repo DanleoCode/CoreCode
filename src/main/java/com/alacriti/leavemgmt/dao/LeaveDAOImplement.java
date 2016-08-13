@@ -19,7 +19,7 @@ import com.alacriti.leavemgmt.valueobject.LeaveBalance;
 import com.alacriti.leavemgmt.valueobject.LeaveHistory;
 import com.alacriti.leavemgmt.valueobject.Tables;
 
-public class LeaveDAOImplement {
+public class LeaveDAOImplement implements LeaveDAO{
 	private Connection con;
 	public static Logger logger = Logger.getLogger(LeaveDAOImplement.class);
 
@@ -31,12 +31,14 @@ public class LeaveDAOImplement {
 		this.con = con;
 	}
 
+	@Override
 	public long AddLeaveInstance(Leave leave) {
 		long generatedLeaveId = -1;
 		PreparedStatement pStmt = null;
 		String sql = "INSERT INTO "
 				+ Tables.LEAVE_INSTANCE
-				+ "(leave_type_id,start_date,end_date,No_of_days,emp_id,project_id,message,tag) VALUES(?,?,?,?,?,?,?,?)";
+				+ "(leave_type_id,start_date,end_date,No_of_days,emp_id,project_id,message,tag)"
+				+ " VALUES(?,?,?,?,?,?,?,?)";
 		try {
 			pStmt = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 			pStmt.setShort(1, leave.getLeaveTypeId());
@@ -53,14 +55,19 @@ public class LeaveDAOImplement {
 			generatedLeaveId = addLeaveInstanceResult.getInt(1);
 			addLeaveInstanceResult.close();
 			logger.info("AddleaveInstance Executed");
+		} catch(NullPointerException ex){
+			logger.error("Database Connection not found");
 		} catch (SQLException ex) {
 			logger.error("SQLEXCEPTION OCCURED:" + ex.getMessage());
+		} catch(Exception ex){
+			logger.error("Uncaught Exception Occured:" + ex.getMessage());
 		} finally {
 			ConnectionHelper.closePreparedStatement(pStmt);
 		}
 		return generatedLeaveId;
 	}
 
+	@Override
 	public int addNewEmployeeLeaveInstance(LeaveHistory leaveInstance) {
 		int updatedRows = -1;
 		PreparedStatement pStmt = null;
@@ -89,7 +96,7 @@ public class LeaveDAOImplement {
 
 		return updatedRows;
 	}
-
+	@Override
 	public int updateLeaveStatus(LeaveHistory leaveInstance) {
 		String sql = "UPDATE "
 				+ Tables.EMPLOYEE_LEAVE_INSTANCE
@@ -115,7 +122,8 @@ public class LeaveDAOImplement {
 
 		return updatedRows;
 	}
-
+	
+	@Override
 	public List<Employee> getPendingLeaveApproval(int empId,
 			short leaveStatusCode, String approverLevel) {
 		String sql = "select * from " + Tables.EMPLOYEE_LEAVE_INSTANCE
@@ -132,18 +140,16 @@ public class LeaveDAOImplement {
 			list = LeaveBoUtility.getLeaveApprovalList(approver1List);
 			logger.info("got executed");
 		} catch (NullPointerException ex) {
-			logger.info("Connection not found.");
-			logger.error("Connection not found");
+			logger.error("Connection not found : " + ex.getMessage());
 		} catch (SQLException ex) {
-			logger.info("SQLException : " + ex.getMessage());
-			logger.error("Connection not found");
+			logger.error("SQLException : " + ex.getMessage());
 		} finally {
 			ConnectionHelper.closePreparedStatement(pStmt);
-			;
 		}
 		return list;
 	}
-
+	
+	@Override
 	public List<Employee> getAllLeavesHistory() {
 		String sql = "select * from " + Tables.EMPLOYEE_LEAVE_INSTANCE;
 		PreparedStatement pStmt = null;
@@ -156,17 +162,18 @@ public class LeaveDAOImplement {
 			list = LeaveBoUtility.getLeaveApprovalList(approver1List);
 			logger.info("got executed");
 		} catch (NullPointerException ex) {
-			logger.info("Connection not found.");
 			logger.error("Connection not found");
 		} catch (SQLException ex) {
-			logger.info("SQLException : " + ex.getMessage());
-			logger.error("Connection not found");
+			logger.error("SQLException : "  + ex.getMessage());
+		} catch (Exception ex) {
+			logger.error("uncaught Exception : "  + ex.getMessage());
 		} finally {
 			ConnectionHelper.closePreparedStatement(pStmt);
-			;
 		}
 		return list;
 	}
+	
+	@Override
 	public List<EmployeeLeaveHistory> getAllLeaves(int empId) {
 		String sql = "SELECT * FROM " + Tables.EMPLOYEE_LEAVE_INSTANCE + " a, "
 				+ Tables.LEAVE_INSTANCE
@@ -222,6 +229,7 @@ public class LeaveDAOImplement {
 		return updatedRows;
 	}
 	
+	@Override
 	public int updateLeaveBalance(LeaveBalance leaveBalance){
 		int updatedRows = -1;
 		String sql = "UPDATE " + Tables.EMP_LEAVE 
@@ -253,6 +261,7 @@ public class LeaveDAOImplement {
 		return updatedRows;
 	}
 	
+	@Override
 	public LeaveBalance getLeaveBalance(int empId, int year) {
 		PreparedStatement pStmt = null;
 		LeaveBalance leaveBalance = null;
@@ -276,6 +285,7 @@ public class LeaveDAOImplement {
 		return leaveBalance;
 	}
 
+	@Override
 	public Leave getLeaveById(long leaveId) {
 		Leave leave = null;
 		PreparedStatement pStmt = null;
@@ -299,6 +309,7 @@ public class LeaveDAOImplement {
 		return leave;
 	}
 	
+	@Override
 	public LeaveHistory getLeaveHistoryById(long leaveId){
 		LeaveHistory history = null;
 		PreparedStatement pStmt = null;

@@ -31,6 +31,7 @@ public class EmployeeResource {
 	@Produces("application/json")
 	@Consumes("application/json")
 	/* Resource Path : /employee */
+	
 	public EmployeeInfo createEmployee(EmployeeProfile employeeInfo){
 		EmployeeInfo empProfile = new EmployeeProfile();
 		empProfile = EmployeeDeligate.createNewEmployee(employeeInfo); 
@@ -42,7 +43,7 @@ public class EmployeeResource {
 	@Path(URLConstant.GET_EMPLOYEE_BY_ID)
 	/* Resource Path : "/employee/{employeeId}" */
 	
-	public EmployeeInfo getEmployeeInfo(@PathParam("employeeId") int id){
+	public EmployeeInfo getEmployeeInfo(@PathParam(URLConstant.EMPLOYEEID) int id){
 		EmployeeBOImplement Bo = new EmployeeBOImplement();
 		return Bo.getEmployeeInfo(id);
 	}
@@ -53,7 +54,7 @@ public class EmployeeResource {
 	@Path(URLConstant.GET_EMPLOYEE_BY_ID)
 	/*Resource Path : "/employee/{employeeId}" */
 	
-	public EmployeeProfile updateEmployeeInfo(@PathParam("employeeId") int id, EmployeeProfile employeeInfo){
+	public EmployeeProfile updateEmployeeInfo(@PathParam(URLConstant.EMPLOYEEID) int id, EmployeeProfile employeeInfo){
 		EmployeeBOImplement Bo = new EmployeeBOImplement();
 		Bo.updateEmployeeInfo(employeeInfo);
 		return employeeInfo;
@@ -63,7 +64,7 @@ public class EmployeeResource {
 	@Produces("application/json")
 	@Path(URLConstant.PROFILE)
 	/*Resource Path : "/employee/profile/{employeeId}" */	
-	public EmployeeProfile getEmployeeProfile(@PathParam("employeeId") int empId){
+	public EmployeeProfile getEmployeeProfile(@PathParam(URLConstant.EMPLOYEEID) int empId){
 		EmployeeBOImplement Bo = new EmployeeBOImplement();
 		return Bo.getEmployeeProfile(empId);
 	}
@@ -74,7 +75,7 @@ public class EmployeeResource {
 	@Path(URLConstant.PROFILE)
 	/*Resource Path : "employee/profile/{employeeId}" */
 	
-	public Employee updateEmployeeProfile(@PathParam("employeeId") int empId, Employee employee){
+	public Employee updateEmployeeProfile(@PathParam(URLConstant.EMPLOYEEID) int empId, Employee employee){
 		logger.info("Hello update");
 		return EmployeeDeligate.updateEmployee(empId, employee);
 	}
@@ -85,7 +86,7 @@ public class EmployeeResource {
 	/*Resource Path : "employee/profiles" */
 	
 	public List<EmployeeProfile> getProfiles(@DefaultValue("0") @QueryParam("offset") int offset,
-											@DefaultValue("30")@QueryParam("limit") int limit){
+											@DefaultValue("10")@QueryParam("limit") int limit){
 		logger.info("start " + offset);
 		logger.info("limit " + limit);
 		return EmployeeDeligate.getProfiles(offset, limit);
@@ -98,9 +99,17 @@ public class EmployeeResource {
 	/*Resource Path : "employee/update" */
 	
 	public EmployeeProfile updatePassword(Employee employee){
-		logger.info("hello resource");
 		EmployeeDeligate employeeDeligate = new EmployeeDeligate();
 		return employeeDeligate.updatePassword(employee);
 		
+	}
+	
+	@GET
+	@Produces("application/json")
+	@Path("/search")
+	/*Resource Path : "employee/search"*/
+	
+	public List<EmployeeProfile> searchProfile(@QueryParam("q") String query){
+		return EmployeeDeligate.searchProfile(query);
 	}
 }

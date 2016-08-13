@@ -22,12 +22,14 @@ public class OauthBOImplement {
 			this.con = ConnectionHelper.getConnection();
 		}
 		
-		public EmployeeInfo ProcessRequest(EmployeeProfile empProfile, UserSession session){
+		public EmployeeProfile ProcessRequest(EmployeeProfile empProfile, UserSession session){
 			EmployeeInfo employeeInfo = null;
 			EmployeeProfile employeeProfile = null;
 			EmployeeBOImplement employeeBOImplement = null;
 			EmployeeDAOImplement employeeDAOImplement = new EmployeeDAOImplement(con);
-			employeeInfo = employeeDAOImplement.getInfoByAttribute("email", empProfile.getEmail());
+			List<EmployeeInfo> empList = employeeDAOImplement.getInfoByAttribute("email", empProfile.getEmail());
+			if(empList.size() > 0)
+				employeeInfo = empList.get(0); 
 			
 			if(employeeInfo == null){
 				logger.info("User does not exist");
@@ -57,8 +59,8 @@ public class OauthBOImplement {
 				if(list1.size() > 0){
 					employeeProfile = list1.get(0);
 					logger.info("passed the test");
-					int empId = list1.get(0).getEmpId();
-					short empType = list1.get(0).getEmployeeType();
+					int empId = employeeProfile.getEmpId();
+					short empType = employeeProfile.getEmployeeType();
 					Timestamp lastMOdifiedTime = new Timestamp(
 							new java.util.Date().getTime());
 
@@ -76,14 +78,6 @@ public class OauthBOImplement {
 					}
 					
 				}
-				
-
-					
-
-	
-				
-				
-				
 				logger.info("got the info");
 				logger.info(employeeProfile);
 			}

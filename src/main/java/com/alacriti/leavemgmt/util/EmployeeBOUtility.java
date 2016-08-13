@@ -14,10 +14,11 @@ public class EmployeeBOUtility  {
 
 	public static Logger logger = Logger.getLogger(EmployeeBOUtility.class);
 	
-	public static EmployeeInfo getSelectEmployeeInfoData(ResultSet employeeInfoRecord) {
+	public static List<EmployeeInfo> getSelectEmployeeInfoData(ResultSet employeeInfoRecord) {
+		List<EmployeeInfo> list = new ArrayList<EmployeeInfo>();
 		EmployeeInfo employeeInfo = null;
 		try {
-			if (employeeInfoRecord.next()) {
+			while(employeeInfoRecord.next()) {
 				employeeInfo = new EmployeeInfo();
 				employeeInfo.setEmpId(employeeInfoRecord.getInt("emp_id"));
 				employeeInfo.setEmpCode(employeeInfoRecord.getString("emp_code"));
@@ -27,6 +28,7 @@ public class EmployeeBOUtility  {
 				employeeInfo.setEmail(employeeInfoRecord.getString("email"));
 				employeeInfo.setMobile(employeeInfoRecord.getString("mobile"));
 				employeeInfo.setProjectId(employeeInfoRecord.getInt("project_id"));
+				list.add(employeeInfo);
 			}
 		} catch (NullPointerException ex) {
 			LogRecord.logger.debug("EmployeeInfoRecord ResultSet is Null for id provided : " + ex.getMessage());
@@ -35,7 +37,7 @@ public class EmployeeBOUtility  {
 		} catch(Exception ex){
 			logger.error("Uncaught : " + ex.getMessage());
 		}
-		return employeeInfo;
+		return list;
 
 	}
 
@@ -58,9 +60,9 @@ public class EmployeeBOUtility  {
 				employeeProfile.setApprover3(employeeProfileRecord.getInt("approver3_id"));
 			}
 		} catch (NullPointerException ex) {
-			LogRecord.logger.debug("EmployeeProfileRecord ResultSet is Null for id provided : " + ex.getMessage());
+			logger.debug("EmployeeProfileRecord ResultSet is Null for id provided : " + ex.getMessage());
 		} catch (SQLException ex) {
-			LogRecord.logger.debug("Error While Parsing the data from EmployeeProfileRecord resultset: " + ex.getMessage());
+			logger.debug("Error While Parsing the data from EmployeeProfileRecord resultset: " + ex.getMessage());
 		}
 		return employeeProfile;
 	}
@@ -92,16 +94,15 @@ public class EmployeeBOUtility  {
 				list.add(employeeProfile);
 			}
 		} catch (NullPointerException ex) {
-			LogRecord.logger.debug("EmployeeProfileRecord ResultSet is Null for id provided : " + ex.getMessage());
+			logger.debug("EmployeeProfileRecord ResultSet is Null for id provided : " + ex.getMessage());
 		} catch (SQLException ex) {
-			LogRecord.logger.debug("Error While Parsing the data from EmployeeProfileRecord resultset: " + ex.getMessage());
+			logger.debug("Error While Parsing the data from EmployeeProfileRecord resultset: " + ex.getMessage());
+		} catch(Exception ex){
+			logger.info("Uncaught Exception : " + ex.getMessage());
 		}
 		return list;
 	}
-	public List<EmployeeInfo> parseResultSetToList(ResultSet rs) {
-		
-		return null;
-	}
+	
 
 
 

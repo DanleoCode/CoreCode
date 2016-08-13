@@ -64,7 +64,6 @@ public class Auth {
 	
 	@POST
 	@Consumes("application/x-www-form-urlencoded")
-//	@Consumes("application/json")
 	@Produces("application/json")
 	@Path("/oauth")
 	
@@ -76,12 +75,23 @@ public class Auth {
 		userSession.setEmpSessionId(session.getId());
 		
 		
-		EmployeeInfo employeeInfo = null;
+		EmployeeProfile employeeProfile = null;
 		try {
-			employeeInfo = AuthDeligate.verifyToken(token,userSession);
+			employeeProfile = AuthDeligate.verifyToken(token,userSession);
+			
+			try{
+				userSession.setEmpId(employeeProfile.getEmpId());
+				userSession.setEmployeeType(employeeProfile.getEmployeeType());
+				session.setAttribute("empId", employeeProfile.getEmpId());
+				session.setAttribute("empType", employeeProfile.getEmployeeType());
+				} catch(NullPointerException ex){
+					logger.info("not authenticated");
+				} catch(IndexOutOfBoundsException ex){
+					logger.info("not authenticated");
+				}
 		} catch (GeneralSecurityException | IOException e) {
 			e.printStackTrace();
 		}
-		return employeeInfo;
+		return employeeProfile;
 	}
 }
