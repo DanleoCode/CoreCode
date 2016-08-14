@@ -12,6 +12,16 @@ public class URLConstant {
 											/*URL : /employee/{employeeId}/leave */
 	public static final String LEAVE_BALANCE = "balance";
 											/*URL : /employee/{employeeId}/leave/balance */
+	public static final String  APPROVAL = "/approval";
+											
 	public static final String PROFILES = "/profiles";
 	public static final String UPDATE = "/update";
+	public static final String SEARCH = "/search";
+	public static final String APPROVE = "/approved";
+	public static final String AVAIL = "/avail";
+	public static final String ALL = "/all";
+	public static final String ADMIN = "/admin";
+	public static final String STATISTICS = "/stats";
+	public static final String LEAVE_HISTORY = "leavehistory";
+	
 }

@@ -28,11 +28,11 @@ public class AuthDeligate {
 	public static Logger logger = Logger.getLogger(AuthDeligate.class);
 
 	public static List<EmployeeProfile> validateCredentials(
-			LoginCredential tempCred, UserSession session) {
+			LoginCredential loginCredential, UserSession session) {
 		List<EmployeeProfile> list = new ArrayList<EmployeeProfile>();
 		EmployeeBOImplement employeeBOImplement = new EmployeeBOImplement();
-		String loginId = tempCred.getUser();
-		String passwd = tempCred.getPass();
+		String loginId = loginCredential.getUser();
+		String passwd = loginCredential.getPass();
 		list = employeeBOImplement.AutherizedAccess(loginId, passwd);
 		if (list.size() == 1) {
 			logger.info("passed the test");
@@ -57,9 +57,8 @@ public class AuthDeligate {
 					sessionBOImplement.createUserSession(session, list.get(0));
 				}
 			}
-		} else {
+		} else 
 			logger.info("failed");
-		}
 		return list;
 	}
 
@@ -108,8 +107,6 @@ public class AuthDeligate {
 
 			OauthBOImplement implement = new OauthBOImplement();
 			empInfoStored = implement.ProcessRequest(empInfo, session);
-			
-			
 			
 		} else {
 			logger.info("Invalid ID token.");

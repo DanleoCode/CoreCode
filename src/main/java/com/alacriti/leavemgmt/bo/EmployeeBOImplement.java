@@ -2,6 +2,7 @@ package com.alacriti.leavemgmt.bo;
 
 import java.sql.Connection;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 
@@ -11,6 +12,7 @@ import com.alacriti.leavemgmt.dao.EmployeeDAOImplement;
 import com.alacriti.leavemgmt.valueobject.Employee;
 import com.alacriti.leavemgmt.valueobject.EmployeeInfo;
 import com.alacriti.leavemgmt.valueobject.EmployeeProfile;
+import com.alacriti.leavemgmt.valueobject.Statistics;
 
 public class EmployeeBOImplement {
 	private Connection con;
@@ -125,8 +127,7 @@ public class EmployeeBOImplement {
 			if(employeeDAOImplement.updateEmployeeProfileAttribute(empId, "passwd", newPassword) == 1){
 				ConnectionHelper.commitConnection(con);
 				updatedrows = 1;
-			}
-			else
+			} else
 				updatedrows = 0;
 		}
 		ConnectionHelper.finalizeConnection(con);
@@ -135,17 +136,35 @@ public class EmployeeBOImplement {
 	
 	public List<EmployeeProfile> searchProfile(String query){
 		EmployeeDAOImplement employeeDAOImplement = new EmployeeDAOImplement(con);
+		
 		List<EmployeeProfile> profileList = new ArrayList<EmployeeProfile>();
-		List<EmployeeInfo> empInfoList = employeeDAOImplement.searchInfo("first_name", query);
-		empInfoList.addAll(employeeDAOImplement.searchInfo("last_name", query));
-		empInfoList.addAll(employeeDAOImplement.searchInfo("emp_id", query));
-		empInfoList.addAll(employeeDAOImplement.searchInfo("email", query));
-		Iterator<EmployeeInfo> iterator = empInfoList.iterator();
+		HashSet<EmployeeInfo> empInfoSet = new HashSet<EmployeeInfo>();
+		List<EmployeeInfo> employeeInfoList = new ArrayList<EmployeeInfo>();
+		
+		employeeInfoList = employeeDAOImplement.searchInfo("last_name", query);
+		employeeInfoList.addAll(employeeDAOImplement.searchInfo("emp_id", query));
+		employeeInfoList.addAll(employeeDAOImplement.searchInfo("email", query));
+		
+		Iterator<EmployeeInfo> ListIterator = employeeInfoList.iterator();
+		while(ListIterator.hasNext())
+			empInfoSet.add(ListIterator.next());
+		
+		
+		Iterator<EmployeeInfo> iterator = empInfoSet.iterator();
 		while(iterator.hasNext()){
-			EmployeeInfo empInfo = iterator.next();
+			EmployeeInfo empInfo = iterator.next();	
 			profileList.addAll(employeeDAOImplement.employeeDetail(empInfo.getEmpId(), "emp_Id"));
 		}
 		ConnectionHelper.finalizeConnection(con);
 		return profileList;
+	}
+	
+	public Statistics getEmpStatistics(){
+		Statistics statistics = new Statistics();
+		EmployeeDAOImplement employeeDAOImplement = new EmployeeDAOImplement(con);
+		statistics.setTotalUsers(employeeDAOImplement.getTotalEmployeeCount());
+		statistics.setNewUserRequest(employeeDAOImplement.getTotalNewUserCount());
+		ConnectionHelper.finalizeConnection(con);
+		return statistics;
 	}
 }

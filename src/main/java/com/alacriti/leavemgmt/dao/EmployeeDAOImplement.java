@@ -12,6 +12,7 @@ import java.util.List;
 import org.apache.log4j.Logger;
 
 import com.alacriti.leavemgmt.bo.ConnectionHelper;
+import com.alacriti.leavemgmt.util.AccountStatusCode;
 import com.alacriti.leavemgmt.util.EmployeeBOUtility;
 import com.alacriti.leavemgmt.valueobject.EmployeeInfo;
 import com.alacriti.leavemgmt.valueobject.EmployeeProfile;
@@ -382,5 +383,51 @@ public class EmployeeDAOImplement implements EmployeeDAO {
 			ConnectionHelper.closePreparedStatement(pStmt);
 		}
 		return list;
+	}
+	
+	public int getTotalEmployeeCount(){
+		int count = -1;
+		String sql = "SELECT COUNT(*) FROM " + Tables.EMPLOYEE_INFO;
+		PreparedStatement pStmt = null;		
+		try{
+			pStmt = con.prepareStatement(sql);
+			logger.info(pStmt);
+			ResultSet employeeCount = pStmt.executeQuery();
+			if(employeeCount.next())
+				return employeeCount.getInt(1);
+		}  catch (NullPointerException ex) {
+			logger.info("Connection Not Found");
+		} catch (SQLException ex) {
+			logger.error("SQLException " + ex.getMessage());
+		} catch(Exception ex){
+			logger.error("Uncaught Exception : " +ex.getMessage() );
+		} finally {
+			ConnectionHelper.closePreparedStatement(pStmt);
+		}
+		return count;
+	}
+	
+	public int getTotalNewUserCount(){
+		int count = -1;
+		String sql = "SELECT COUNT(*) FROM " + Tables.EMPLOYEE_PROFILE
+				+ " where emp_account_status = ?";
+		PreparedStatement pStmt = null;		
+		try{
+			pStmt = con.prepareStatement(sql);
+			pStmt.setShort(1,AccountStatusCode.NOT_APPROVED);
+			logger.info(pStmt);
+			ResultSet employeeCount = pStmt.executeQuery();
+			if(employeeCount.next())
+				return employeeCount.getInt(1);
+		}  catch (NullPointerException ex) {
+			logger.info("Connection Not Found");
+		} catch (SQLException ex) {
+			logger.error("SQLException " + ex.getMessage());
+		} catch(Exception ex){
+			logger.error("Uncaught Exception : " +ex.getMessage() );
+		} finally {
+			ConnectionHelper.closePreparedStatement(pStmt);
+		}
+		return count;
 	}
 }

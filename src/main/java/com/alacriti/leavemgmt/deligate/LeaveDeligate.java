@@ -23,7 +23,7 @@ public class LeaveDeligate {
 
 	public static Logger logger = Logger.getLogger(LeaveDeligate.class);
 
-	public Response validateLeave(int empId, Leave leave) {
+	public static Response validateLeave(int empId, Leave leave) {
 		if (leave.getEmpId() == empId) {
 			LeaveBOImplement leaveBOImplement = new LeaveBOImplement();
 			leaveBOImplement.AddNewLeave(leave);
@@ -45,7 +45,7 @@ public class LeaveDeligate {
 		return leaveHistory;
 	}
 
-	public LeaveHistory updateLeaveStatus(int employeeId,
+	public static LeaveHistory updateLeaveStatus(int employeeId,
 			LeaveHistory leaveInstance) {
 
 		Timestamp currentTime = new Timestamp(new java.util.Date().getTime());
@@ -83,7 +83,7 @@ public class LeaveDeligate {
 		return leaveInstance;
 	}
 
-	public Response getEmployeeLeaveHistory(EmployeeProfile employeeProfile) {
+	public static Response getEmployeeLeaveHistory(EmployeeProfile employeeProfile) {
 		List<EmployeeLeaveHistory> list = new ArrayList<EmployeeLeaveHistory>();
 		LeaveBOImplement leaveBOImplement = new LeaveBOImplement();
 		list = leaveBOImplement.getEmployeeLeaveHistory(employeeProfile
@@ -96,7 +96,7 @@ public class LeaveDeligate {
 		}
 	}
 
-	public LeaveBalance getLeaveBalance(int empId) {
+	public static LeaveBalance getLeaveBalance(int empId) {
 		int year = Calendar.getInstance().get(Calendar.YEAR);
 		LeaveBOImplement leaveBOImplement = new LeaveBOImplement();
 		LeaveBalance leaveBalance = leaveBOImplement.getLeaveBalance(empId,
@@ -104,7 +104,7 @@ public class LeaveDeligate {
 		return leaveBalance;
 	}
 
-	public List<Employee> getLeaveApprovalList(int empId) {
+	public static List<Employee> getLeaveApprovalList(int empId) {
 		List<Employee> list = new ArrayList<Employee>();
 		LeaveBOImplement leaveBOImplement = new LeaveBOImplement();
 		short leaveStatusCode = LeaveStatus.inProgress;
@@ -148,7 +148,7 @@ public class LeaveDeligate {
 		return null;
 	}
 
-	public List<Employee> getApprovedLeaves(int empId) {
+	public static List<Employee> getApprovedLeaves(int empId) {
 		List<Employee> list = new ArrayList<Employee>();
 		LeaveBOImplement leaveBOImplement = new LeaveBOImplement();
 		list = leaveBOImplement.getLeaveApprovalList(empId,
@@ -156,7 +156,7 @@ public class LeaveDeligate {
 		return list;
 	}
 
-	public LeaveHistory availLeavRequest(Employee employee) {
+	public static LeaveHistory availLeavRequest(Employee employee) {
 		Timestamp lastModified = new Timestamp(new java.util.Date().getTime());
 		LeaveHistory history = employee.getLeaveHistory();
 		history.setLastModified(lastModified);
@@ -172,7 +172,7 @@ public class LeaveDeligate {
 		return null;
 	}
 	
-	public List<Employee> getAllLeavesHistory() {
+	public static List<Employee> getAllLeavesHistory() {
 		List<Employee> list = new ArrayList<Employee>();
 		LeaveBOImplement leaveBOImplement = new LeaveBOImplement();
 		list = leaveBOImplement.getAllLeaves();

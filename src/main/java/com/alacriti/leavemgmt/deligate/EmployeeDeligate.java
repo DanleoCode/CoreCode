@@ -13,6 +13,7 @@ import com.alacriti.leavemgmt.util.AccountStatusCode;
 import com.alacriti.leavemgmt.valueobject.Employee;
 import com.alacriti.leavemgmt.valueobject.EmployeeInfo;
 import com.alacriti.leavemgmt.valueobject.EmployeeProfile;
+import com.alacriti.leavemgmt.valueobject.Statistics;
 
 public class EmployeeDeligate {
 	public static Logger logger = Logger.getLogger(EmployeeResource.class);
@@ -92,5 +93,12 @@ public class EmployeeDeligate {
 	public static List<EmployeeProfile> searchProfile(String query){
 		EmployeeBOImplement employeeBOImplement = new EmployeeBOImplement();
 		return employeeBOImplement.searchProfile(query);
+	}
+	
+	public static Statistics getStatistics(){
+		Statistics statistics = null;
+		EmployeeBOImplement boImplement = new EmployeeBOImplement();
+		statistics = boImplement.getEmpStatistics();
+		return statistics;
 	}
 }

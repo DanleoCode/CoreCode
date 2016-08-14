@@ -32,77 +32,61 @@ public class LeaveResource {
 	private HttpServletRequest request;
 	
 	public static Logger logger = Logger.getLogger(LeaveDeligate.class);
+	
 	@POST
 	@Consumes("application/json")
 	@Produces("application/json")
 	/*URL : /employee/{employeeId}/leave */
-	public Response postLeave(@PathParam("employeeId") int employeeId ,Leave leave){
-		LeaveDeligate leaveDeligate = new LeaveDeligate();
-		return leaveDeligate.validateLeave(employeeId,leave);
+	public Response postLeave(@PathParam(URLConstant.EMPLOYEEID) int employeeId ,Leave leave){
+		return LeaveDeligate.validateLeave(employeeId,leave);
 	}
 	
 	@PUT
 	@Consumes("application/json")
 	@Produces("application/json")
 	
-	public LeaveHistory updatedLeaveStatus(@PathParam("employeeId") int employeeId ,LeaveHistory leaveInstance){
+	public LeaveHistory updatedLeaveStatus(@PathParam(URLConstant.EMPLOYEEID) int employeeId ,LeaveHistory leaveInstance){
 		HttpSession httpSession = request.getSession();
 		logger.info("hello typw: " + httpSession.getAttribute("empType"));
 		logger.info("hello Id	: " + httpSession.getAttribute("empId"));
-		LeaveDeligate leaveDeligate = new LeaveDeligate();
-		return leaveDeligate.updateLeaveStatus(employeeId, leaveInstance);
+		return LeaveDeligate.updateLeaveStatus(employeeId, leaveInstance);
 	}
 	
 	@GET
 	@Consumes("application/json")
 	@Produces("application/json")
-	@Path("approval")
-	public List<Employee> getListForApprover(@PathParam("employeeId") int employeeId){
-		LeaveDeligate leaveDeligate = new LeaveDeligate();
-		return leaveDeligate.getLeaveApprovalList(employeeId);
+	@Path(URLConstant.APPROVAL)
+	
+	public List<Employee> getListForApprover(@PathParam(URLConstant.EMPLOYEEID) int employeeId){
+		return LeaveDeligate.getLeaveApprovalList(employeeId);
 	}
 	
 	@GET
 	@Produces("application/json")
-	public Response getEmployeeLeaveHistory(@PathParam("employeeId") int employeeId){
-		LeaveDeligate leaveDeligate = new LeaveDeligate();
+	public Response getEmployeeLeaveHistory(@PathParam(URLConstant.EMPLOYEEID) int employeeId){
 		EmployeeProfile profile = new EmployeeProfile();
 		profile.setEmpId(employeeId);
-		return leaveDeligate.getEmployeeLeaveHistory(profile);
+		return LeaveDeligate.getEmployeeLeaveHistory(profile);
 	}
 	
 	@GET
 	@Produces("application/json")
 	@Path(URLConstant.LEAVE_BALANCE)
 	/*URL : employee/{employeeId}/leave/balance */
-	public LeaveBalance getLeaveBalance(@PathParam("employeeId") int employeeId){
-		LeaveDeligate deligate = new LeaveDeligate();
-		return deligate.getLeaveBalance(employeeId);
+	public LeaveBalance getLeaveBalance(@PathParam(URLConstant.EMPLOYEEID) int employeeId){
+		return LeaveDeligate.getLeaveBalance(employeeId);
 	}
 	
 	@GET
 	@Produces("application/json")
-	@Path("approved")
-	
-	public List<Employee> getApprovedLeaves(@PathParam("employeeId") int empId){
+	@Path(URLConstant.APPROVE)
+	/*URL : employee/{employeeId}/leave/approve */
+	public List<Employee> getApprovedLeaves(@PathParam(URLConstant.EMPLOYEEID) int empId){
 		logger.info("in getApprovedLeaves Resource");
-		LeaveDeligate deligate = new LeaveDeligate();
-		return deligate.getApprovedLeaves(empId);
+		return LeaveDeligate.getApprovedLeaves(empId);
 	}
 	
-	@PUT
-	@Produces("application/json")
-	@Path("avail")
-	public LeaveHistory availLeaveRequest(@PathParam("employeeId") int empId, Employee employee){
-		LeaveDeligate leaveDeligate = new LeaveDeligate();
-		return leaveDeligate.availLeavRequest(employee);
-	}
 	
-	@GET
-	@Produces("application/json")
-	@Path("all")
-	public List<Employee> getAllLeavesHistory(@PathParam("employeeId") int empId){
-		LeaveDeligate leaveDeligate =  new LeaveDeligate();
-		return leaveDeligate.getAllLeavesHistory();
-	}
+	
+	
 }

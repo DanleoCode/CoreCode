@@ -79,8 +79,13 @@ public class LeaveBOImplement {
 			Employee employee = iterator.next();
 			int empId = employee.getEmployeeProfile().getEmpId();
 			EmployeeInfo employeeInfo = employeeBOImplement.getEmployeeInfo(empId);
+			employeeBOImplement = new EmployeeBOImplement();
+			EmployeeProfile empProfile = employeeBOImplement.getEmployeeProfile(empId);
+			
 			Leave leave = leaveDAOImplement.getLeaveById(employee.getLeaveHistory().getLeaveId());
+			
 			employee.setEmployeeInfo(employeeInfo);
+			employee.setEmployeeProfile(empProfile);
 			employee.setLeave(leave);
 		}
 		ConnectionHelper.finalizeConnection(con);
@@ -99,7 +104,10 @@ public class LeaveBOImplement {
 			Employee employee = iterator.next();
 			int empId = employee.getEmployeeProfile().getEmpId();
 			EmployeeInfo employeeInfo = employeeBOImplement.getEmployeeInfo(empId);
+			employeeBOImplement = new EmployeeBOImplement();
+			EmployeeProfile empProfile = employeeBOImplement.getEmployeeProfile(empId);
 			Leave leave = leaveDAOImplement.getLeaveById(employee.getLeaveHistory().getLeaveId());
+			employee.setEmployeeProfile(empProfile);
 			employee.setEmployeeInfo(employeeInfo);
 			employee.setLeave(leave);
 		}

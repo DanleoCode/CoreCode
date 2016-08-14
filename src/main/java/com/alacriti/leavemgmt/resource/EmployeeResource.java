@@ -106,7 +106,7 @@ public class EmployeeResource {
 	
 	@GET
 	@Produces("application/json")
-	@Path("/search")
+	@Path(URLConstant.SEARCH)
 	/*Resource Path : "employee/search"*/
 	
 	public List<EmployeeProfile> searchProfile(@QueryParam("q") String query){
