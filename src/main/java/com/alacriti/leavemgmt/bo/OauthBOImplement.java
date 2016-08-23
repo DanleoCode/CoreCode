@@ -2,6 +2,7 @@ package com.alacriti.leavemgmt.bo;
 
 import java.sql.Connection;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -27,7 +28,12 @@ public class OauthBOImplement {
 			EmployeeProfile employeeProfile = null;
 			EmployeeBOImplement employeeBOImplement = null;
 			EmployeeDAOImplement employeeDAOImplement = new EmployeeDAOImplement(con);
-			List<EmployeeInfo> empList = employeeDAOImplement.getInfoByAttribute("email", empProfile.getEmail());
+			List<EmployeeInfo> empList = new ArrayList<EmployeeInfo>();
+			try {
+				empList = employeeDAOImplement.getInfoByAttribute("email", empProfile.getEmail());
+			} catch (Exception e) {
+				logger.info("Exception Occured : " + e.getMessage());
+			}
 			if(empList.size() > 0)
 				employeeInfo = empList.get(0); 
 			
@@ -55,7 +61,12 @@ public class OauthBOImplement {
 			} else {
 				logger.info("User Exist");
 				EmployeeDAOImplement empDaoImplement = new EmployeeDAOImplement(con);
-				List<EmployeeProfile> list1 = empDaoImplement.employeeDetail(employeeInfo.getEmpId(), "emp_Id");
+				List<EmployeeProfile> list1 = new ArrayList<EmployeeProfile>();
+				try {
+					list1 = empDaoImplement.employeeDetail(employeeInfo.getEmpId(), "emp_Id");
+				} catch (Exception e) {
+					logger.error("Exception Occured : " + e.getMessage());
+				}
 				if(list1.size() > 0){
 					employeeProfile = list1.get(0);
 					logger.info("passed the test");

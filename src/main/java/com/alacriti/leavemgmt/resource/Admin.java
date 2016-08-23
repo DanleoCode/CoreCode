@@ -3,11 +3,15 @@ package com.alacriti.leavemgmt.resource;
 import java.util.List;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Response;
 
+import com.alacriti.leavemgmt.deligate.AdminDeligate;
 import com.alacriti.leavemgmt.deligate.EmployeeDeligate;
 import com.alacriti.leavemgmt.deligate.LeaveDeligate;
 import com.alacriti.leavemgmt.valueobject.Employee;
@@ -46,4 +50,16 @@ public class Admin {
 	public LeaveHistory availLeaveRequest(Employee employee){
 		return LeaveDeligate.availLeavRequest(employee);
 	}
+	
+	@POST
+	@Consumes("application/x-www-form-urlencoded")
+	@Produces("application/json")
+	@Path(URLConstant.QUESTION)
+	/*URL : admin/question */
+	
+	public Response AddSecurityQuestion(@FormParam("question") String question){
+		return AdminDeligate.PostQuestionDeligate(question);
+	}
+	
+	
 }

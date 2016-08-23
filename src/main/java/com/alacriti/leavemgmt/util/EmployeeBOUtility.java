@@ -9,6 +9,7 @@ import org.apache.log4j.Logger;
 
 import com.alacriti.leavemgmt.valueobject.EmployeeInfo;
 import com.alacriti.leavemgmt.valueobject.EmployeeProfile;
+import com.alacriti.leavemgmt.valueobject.MasterTable;
 
 public class EmployeeBOUtility  {
 
@@ -103,7 +104,20 @@ public class EmployeeBOUtility  {
 		return list;
 	}
 	
-
+	public static List<MasterTable> getMasterTableData(ResultSet rs) 
+		throws NullPointerException, SQLException, Exception{
+		List<MasterTable> list = new ArrayList<MasterTable>();
+		MasterTable masterTable = null;
+		while(rs.next()){
+			masterTable = new MasterTable();
+			Integer key = rs.getInt(1);
+			masterTable.setKey(key.toString());
+			masterTable.setValue(rs.getString(2));
+			list.add(masterTable);
+		}
+		rs.close();
+		return list;
+	}
 
 
 	

@@ -23,5 +23,6 @@ public class URLConstant {
 	public static final String ADMIN = "/admin";
 	public static final String STATISTICS = "/stats";
 	public static final String LEAVE_HISTORY = "leavehistory";
-	
+	public static final String QUESTION = "/question";
+	public static final String UPDATE_QUESTION = UPDATE + QUESTION;
 }

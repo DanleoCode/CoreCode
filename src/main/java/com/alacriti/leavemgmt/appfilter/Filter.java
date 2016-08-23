@@ -54,6 +54,11 @@ public class Filter implements ContainerRequestFilter {
 					UserSession userSession = AuthDeligate.getSession(empId);
 					if (userSession.getEmpSessionId().equals(sessionId)) {
 						logger.info("Session Found");
+						if(requestForRescource.contains("/admin/")){
+							logger.info("Admin url requested ");
+							if(userSession.getEmployeeType() != 964)
+								throw new NullPointerException();
+						}
 					} else {
 						containerRequestContext.abortWith(Response.status(
 						Status.UNAUTHORIZED).build());
@@ -67,9 +72,7 @@ public class Filter implements ContainerRequestFilter {
 				logger.info("Session not exist");
 				containerRequestContext.abortWith(Response.status(
 						Status.UNAUTHORIZED).build());
-			} finally {
-
-			}
+			} 
 		}
 
 	}

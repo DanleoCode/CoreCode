@@ -19,9 +19,10 @@ import com.alacriti.leavemgmt.deligate.EmployeeDeligate;
 import com.alacriti.leavemgmt.valueobject.Employee;
 import com.alacriti.leavemgmt.valueobject.EmployeeInfo;
 import com.alacriti.leavemgmt.valueobject.EmployeeProfile;
+import com.alacriti.leavemgmt.valueobject.MasterTable;
 import com.alacriti.leavemgmt.valueobject.URLConstant;
 
-//"/employee"
+/* Resource Path : /employee */
 @Path(URLConstant.EMPLOYEE)
 public class EmployeeResource {
 
@@ -111,5 +112,25 @@ public class EmployeeResource {
 	
 	public List<EmployeeProfile> searchProfile(@QueryParam("q") String query){
 		return EmployeeDeligate.searchProfile(query);
+	}
+	
+	@PUT
+	@Consumes("application/json")
+	@Path(URLConstant.UPDATE_QUESTION)
+	/*Resource Path : "employee/update/question"*/
+	
+	public int updateQuestion(Employee employee){
+		int updatedRows = -1;
+		EmployeeDeligate.updateSeurityQuestion(employee);
+		return updatedRows;
+	}
+	
+	@GET
+	@Produces("application/json")
+	@Path(URLConstant.QUESTION)
+	/*Resource Path : "employee/question"*/
+	
+	public List<MasterTable> getQuestions(){
+		return EmployeeDeligate.getAllSecurityQuestion();
 	}
 }

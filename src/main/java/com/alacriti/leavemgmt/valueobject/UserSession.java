@@ -87,4 +87,13 @@ public class UserSession {
 		this.lastMOdifiedTime = lastMOdifiedTime;
 	}
 	
+	@Override
+	public String toString() {
+		return "UserSession [empId=" + empId + ", employeeType=" + employeeType
+				+ ", sessionCreationTime=" + sessionCreationTime
+				+ ", empSessionId=" + empSessionId + ", lastMOdifiedTime="
+				+ lastMOdifiedTime + "]";
+	}
+
+	
 }

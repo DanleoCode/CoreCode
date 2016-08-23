@@ -1,5 +1,6 @@
 package com.alacriti.leavemgmt.deligate;
 
+import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.List;
@@ -13,7 +14,9 @@ import com.alacriti.leavemgmt.util.AccountStatusCode;
 import com.alacriti.leavemgmt.valueobject.Employee;
 import com.alacriti.leavemgmt.valueobject.EmployeeInfo;
 import com.alacriti.leavemgmt.valueobject.EmployeeProfile;
+import com.alacriti.leavemgmt.valueobject.MasterTable;
 import com.alacriti.leavemgmt.valueobject.Statistics;
+import com.alacriti.leavemgmt.valueobject.Tables;
 
 public class EmployeeDeligate {
 	public static Logger logger = Logger.getLogger(EmployeeResource.class);
@@ -89,16 +92,37 @@ public class EmployeeDeligate {
 		}
 		return employee.getEmployeeProfile();
 	}
-	
-	public static List<EmployeeProfile> searchProfile(String query){
+
+	public static List<EmployeeProfile> searchProfile(String query) {
 		EmployeeBOImplement employeeBOImplement = new EmployeeBOImplement();
 		return employeeBOImplement.searchProfile(query);
 	}
-	
-	public static Statistics getStatistics(){
+
+	public static Statistics getStatistics() {
 		Statistics statistics = null;
 		EmployeeBOImplement boImplement = new EmployeeBOImplement();
-		statistics = boImplement.getEmpStatistics();
+		try {
+			statistics = boImplement.getEmpStatistics();
+		} catch (NullPointerException ex) {
+			logger.info("Connection Not Found");
+		} catch (SQLException ex) {
+			logger.error("SQLException " + ex.getMessage());
+		}
 		return statistics;
+	}
+
+	public static int updateSeurityQuestion(Employee employee) {
+		int updatedRows = -1;
+		int empId = employee.getEmployeeProfile().getEmpId();
+		int questionId = employee.getEmployeeProfile().getSecurityQuestionId();
+		String answer = employee.getEmployeeProfile().getSecurityAnswer();
+		EmployeeBOImplement boImplement = new EmployeeBOImplement();
+		updatedRows = boImplement.updateSecurityQuestion(empId, questionId, answer);
+		return updatedRows;
+	}
+
+	public static List<MasterTable> getAllSecurityQuestion() {
+		EmployeeBOImplement boImplement = new EmployeeBOImplement();
+		return boImplement.getMasterTableAllRecord(Tables.SECURITY_QUESTION_MASTER);
 	}
 }
